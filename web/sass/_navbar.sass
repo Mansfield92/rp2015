@@ -1,0 +1,49 @@
+.navbar
+  .container
+    +media($tablet)
+      max-width: 710px
+      padding: 0
+    +media($small-desktop)
+      max-width: 780px
+  &-brand
+    //margin-left: 0 !important
+    +transition(0.5s)
+
+    img
+      margin-top: -5px
+      float: right
+      margin-left: 20px
+      +opacity(0.6)
+      +transition(0.5s)
+    &:hover
+      color: #ffc520
+      img
+        +scale(1.2)
+        +opacity(1)
+    //&.active
+    //  background-color: #080808
+    //  color: #fff
+    //  &:hover
+    //    background-color: #080808
+    //    color: #fff
+.navbar-nav
+  float: none
+  img
+    position: absolute
+    top: 8px
+    left: -20px
+    +opacity(0.7)
+    +transition(0.5s)
+    +media($tablet)
+      top: 13px
+.icon-menu
+  +media($tablet)
+    float: right !important
+    a
+      +transition(0.5s)
+      padding-right: 0 !important
+  padding-left: 35px
+  &:hover
+    img
+      +scale(1.2)
+      +opacity(1)
