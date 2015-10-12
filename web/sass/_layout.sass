@@ -1,0 +1,52 @@
+body, html
+  min-width: 100%
+  min-height: 100%
+
+*
+  +box-sizing(border-box)
+  font-family: $font-family-sans-serif
+
+body
+  display: block
+  padding-top: 60px
+  +media($tablet)
+    padding-top: 70px
+  background: url("../img/back.jpg") no-repeat center center
+  +background-size('cover')
+
+.container
+  padding: 0 10px
+  +media($tablet)
+    padding: 0 20px
+p
+  margin: 0
+  padding: 0
+
+.btn-back
+  width: 100%
+  position: relative
+  margin: 0 0 10px 0
+  +media($phone)
+    width: auto
+  +media($tablet)
+    margin: 0 0 20px 0
+  +media(1400px)
+    margin: 0
+    position: absolute
+    top: 0
+    left: 20px
+
+.container
+  +media($tablet)
+    max-width: 710px
+
+  +media($small-desktop)
+    max-width: 1130px
+
+  &-back
+    +media(1400px)
+      display: block
+      width: 100%
+      max-width: 100%
+      position: absolute
+      padding-left: 0

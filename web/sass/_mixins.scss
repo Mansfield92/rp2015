@@ -36,6 +36,11 @@
   #{$property}: #{$value};
 }
 
+@mixin font($fs,$lh){
+  font-size: $fs;
+  line-height: $lh;
+}
+
 /// Background Gradient
 /// @param {Color} $startColor [#3C3C3C] - Start Color
 /// @param {Color} $endColor [#999999] - End Color

@@ -3,60 +3,108 @@ section
 
 .train-detail
   width: 100%
-  border: 20px solid rgba(255,255,255,0.75)
+  border: 10px solid rgba(255,255,255,0.85)
+  +media($tablet)
+    border-width: 20px
 
 .train-description
-  margin-top: 20px
-  padding: 20px
-  background: rgba(255,255,255,0.75)
-  width: calc(50% - 10px)
-  display: inline-block
-  &_right
-    margin-left: 20px
+  margin-top: 10px
+  padding: 10px
+  background: rgba(255,255,255,0.85)
+
+  +media($tablet)
+    margin-top: 20px
+    padding: 20px
+
+  +media($phone)
+    width: calc(50% - 10px)
+    display: inline-block
+
+    &_right
+      margin-left: 20px
+
   &_item
     margin-bottom: 20px
     font-size: 18px
+    text-align: center
+    +transition(0.5s)
+
+    +media($tablet)
+      text-align: left
+
     &:last-of-type
       margin-bottom: 0
+
     span
       font-weight: bold
       display: inline-block
-      padding-right: 18px
-      width: 160px
-      text-align: right
+      width: 100%
+      text-align: center
 
-.btn-back
-  margin: 0 0 20px 0
+      +media($tablet)
+        padding-right: 18px
+        width: 160px
+        text-align: right
 
 .btn-actions
-  margin: 20px 20px 20px 0
+  width: 100%
+  margin: 10px 10px 0 0
+
+  +media($phone)
+    width: auto
+
+  +media($tablet)
+    margin: 20px 20px 20px 0
 
 .train-header
-  background: rgba(255,255,255,0.75)
-  padding: 20px
-  margin-bottom: 20px
-  font-size: 50px
+  background: rgba(255,255,255,0.85)
+  margin-bottom: 10px
+  padding: 10px
   text-align: center
+  +font(25px,30px)
+
+  +media($tablet)
+    margin-bottom: 20px
+    padding: 20px
+    +font(50px,60px)
+
 
 .btn-actions, .btn-back
   font-weight: bold
   padding: 15px 30px
+  background: $color-dark
+  //border: 1px solid $color-dark-border
   border: none
-  transition: 0.5s
-  background: rgba(255,255,255,0.75)
-  &:hover
-    background: rgba(255,255,255,1)
+  color: rgba(255,255,255,0.7)
+  position: relative
+  transform: translateZ(0px)
+  +transition(0.3s)
+  +transition(0.5s)
+  +font(15px,15px)
 
-.btn-back
-  position: absolute
-  top: 0
-  left: 20px
+  &:hover
+    color: $color-black
+    &:before
+      +scaleX(1)
+  
+  &:before
+    background: $color-white none repeat scroll 0 0
+    bottom: 0
+    left: 0
+    right: 0
+    top: 0
+    content: ""
+    position: absolute
+    z-index: -1
+    +scaleX(0)
+    +transform-origin(0 50% 0)
+    +transition(0.3s transform ease-out)
 
 ._train-detail
   .navbar
     .container
       +media($tablet)
         max-width: 710px
-        padding: 0
+        //padding: 0
       +media($small-desktop)
         max-width: 1130px
