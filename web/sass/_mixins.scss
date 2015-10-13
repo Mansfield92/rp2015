@@ -3,6 +3,16 @@
       @content;
     }
 }
+@mixin mediaTo($width) {
+    @media screen and (max-width: $width) {
+      @content;
+    }
+}
+@mixin mediaInt($from, $to) {
+    @media screen and (min-width: $from) and (max-width: $to) {
+      @content;
+    }
+}
 
 /* -------------------------------------------------------------
   Sass CSS3 Mixins! The Cross-Browser CSS3 Sass Library
