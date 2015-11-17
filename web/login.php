@@ -31,14 +31,14 @@ if ($login->is_logged == 1) {
     ?>
     <link href="css/login.min.css" rel="stylesheet">
     <link href="css/vader/jquery-ui-1.9.2.custom.min.css" rel="stylesheet">
+    <link type="image/png" rel="icon" href="img/favicon.png">
     <script src="js/jquery.min.js"></script>
     <script type='text/javascript' src='js/jquery.tipsy.js'></script>
     <script src="js/jquery-ui-1.9.2.custom.min.js"></script>
-    <title>Main page</title>
+    <title>Login</title>
     <script>
 
         $(function () {
-
             $.fn.center = function () {
                 this.css("position", "absolute");
                 this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop() / 2) + "px");
