@@ -22,10 +22,17 @@ gulp.task('compressed', function(){
         .pipe(gulp.dest($output_dir))
 });
 
+/* LOGIN CSS */
+gulp.task('login', function(){
+    return sass($input_dir+"login.sass",{style: 'compressed'})
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest($output_dir))
+});
+
 /* ACTIVE WATCHERS CALLED AS DEFAULT  */
 gulp.task('watchers',function(){
     //gulp.watch($input_dir+$watch, ['normal']);
-    gulp.watch($input_dir+$watch, ['compressed']);
+    gulp.watch($input_dir+$watch, ['compressed','login']);
 });
 
 /* TASK INITIALIZED AT START*/
