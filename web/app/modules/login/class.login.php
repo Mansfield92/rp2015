@@ -1,6 +1,6 @@
 <?php
 class login {
-	var $login_name,$login_pw,$is_logged,$checktimelimit,$session_string,$bug;
+	var $login_name,$login_pw,$is_logged,$checktimelimit,$session_string,$bug,$role;
     private $users = array(array('name'=>'Neo','pw'=>'lamer'),array('name'=>'admin','pw'=>'lamer'));
 
 	function login(){
@@ -35,12 +35,14 @@ class login {
 		$this->session_string = md5($this->login_name.$this->login_pw);
 		$_SESSION['login_name'] = $_POST['login_name'];
 		$_SESSION['login_pw'] = $_POST['login_pw'];
+		$_SESSION['login_role'] = 3;
 		$_SESSION['session_string'] = md5($this->login_name.$this->login_pw);
 	}
 
 	function logout(){
 		$this->session_login_string=md5(uniqid(rand()));
 		$this->login_name=md5(uniqid(rand()));
+		$this->role=false;
 		session_unset();
 		session_destroy();
 		$this->is_logged = $this->logged();
@@ -51,6 +53,7 @@ class login {
 			if($_SESSION['session_string'] == md5($_SESSION['login_name'].$_SESSION['login_pw'])){
 				$this->login_name = $_SESSION['login_name'];
 				$this->login_pw = $_SESSION['login_pw'];
+				$this->role = $_SESSION['login_role'];
 				$this->session_string = $_SESSION['session_string'];
 				return (1);
 			}

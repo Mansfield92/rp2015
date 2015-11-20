@@ -83,6 +83,11 @@ section
   +media($tablet)
     margin: 20px 20px 20px 0
 
+  &.btn-add
+    +media($tablet)
+      margin: 0 0 5px 0
+
+
 .train-header
   background: rgba(255,255,255,0.85)
   margin-bottom: 10px
@@ -126,6 +131,7 @@ section
     +scaleX(0)
     +transform-origin(0 50% 0)
     +transition(0.3s transform ease-out)
+
 
 ._train-detail
   .navbar

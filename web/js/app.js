@@ -3,6 +3,8 @@
  */
 var $App = $App || {};
 
+$App.titles = {'default': 'Dashboard', 'trains-list': 'Seznam Vlaku', 'trains-add_form': 'Přidání vlaku'};
+
 $(function () {
     $.fn.center = function () {
         this.css("position", "absolute");
@@ -21,6 +23,11 @@ function logout() {
         F5();
     });
 }
+
+function log(msg) {
+    console.log(msg);
+}
+
 function F5() {
     window.location.reload(true);
 }
@@ -42,7 +49,7 @@ $App.getAjaxData = function (target, data) {
     }
     var getData = $.ajax({
         type: 'POST',
-        url: "app/modules/"+target+"/views.php",
+        url: "app/modules/" + target + "/views.php",
         data: data,
         success: function (data) {
             getData = data;
@@ -54,44 +61,107 @@ $App.getAjaxData = function (target, data) {
     return getData;
 };
 
-$App.loadPage = function(module, view){
-    var response = $App.getAjaxData(module,{view: view});
-    window.history.pushState({"html":response,"pageTitle":module+view},"", "#" + module+"-"+view);
-    $App.body.html(response);
-    document.title = module + "_" + view;
+$App.loadPage = function (module, view) {
+    var response = $App.getAjaxData(module, {view: view});
+    window.history.pushState({"html": response, "pageTitle": module + view}, "", "#" + module + "-" + view);
+    $App.body.replaceWith(response);
+    $App.body = $('body').find('> section');
+    document.title = $App.titles[module + '-' + view];
+    $App.dynamic();
+};
 
-    //window.history.pushState("object or string", "Title", module+"/"+view);
+$App.executeOperation = function (module, $data) {
+    var getData = $.ajax({
+        dataType: 'json',
+        type: 'POST',
+        url: "app/controler.php",
+        data: $data,
+        success: function (data) {
+            switch ($data){
+                case 'insert':
+
+                    break;
+                case 'update':
+
+                    break;
+                case 'delete':
+
+                    break;
+            }
+            if (data["response"] !== false) {
+                getData = data;
+                log(data["operation"]);
+            }else{
+                // @TODO pokud se form neodesle
+                log('error');
+                log($data.operation);
+            }
+        },
+        async: false,
+        timeout: 5000,
+        global: false
+    }).responseText;
+    return getData;
+};
+
+$App.dynamic = function () {
+    //$('.datepicker').dat;
+    $('.ajax-action').unbind('click').bind('click', function () {
+        var $action = $(this).data('action');
+        $action = $action.split('-');
+        if ($action.length == 2) {
+            $App.loadPage($action[0], $action[1]);
+        } else {
+            var $data = "";
+            $('.add_form__row input').each(function () {
+                $data += $(this).attr('name') + "[^]" + $(this).val() + "$^$";
+            });
+            var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)});
+            log($response);
+            log($response["json"]);
+            //log(toJSON($response));
+            //log(jsonp($response));
+            log($response[0]);
+            //log($response.module + ";" + $response.operation + ";" + $response.response );
+        }
+    });
 };
 
 
 $App.init = function () {
     $App.body = $('body').find('> section');
     var $path = window.location.href.toString();
-    $path = $path.substr($path.lastIndexOf('/'));
-    $path = $path.substr($path.indexOf('.php')+4);
-    if($path.length > 1){
+    console.log($path);
+    $path = $path.substr($path.lastIndexOf('/') + 1);
+    if ($path.length > 0) {
         $path = $path.substr(1);
-        $modules = $path.split('-');
-        $App.loadPage($modules[0],$modules[1]);
-    }else {
+        console.log($path);
+        var $modules = $path.split('-');
+        $App.loadPage($modules[0], $modules[1]);
+    } else {
         if ($App.body.hasClass('index')) {
             $('.grid-item').click(function () {
                 var $action = $(this).data('action');
                 $action = $action.split('-');
                 $App.loadPage($action[0], $action[1]);
             });
+        } else {
+            F5();
         }
     }
+    $App.dynamic();
 };
 
-$( document ).ready(function() {
+$(document).ready(function () {
     $App.init();
 });
 
-window.onpopstate = function(e){
-    if(e.state){
-        $App.body.html(e.state.html);
-        document.title = e.state.pageTitle;
-        $App.init();
+window.onpopstate = function (e) {
+    //$App.init();
+    if (e.state) {
+        //console.log(e.state.html);
+        //$App.body.replaceWith(e.state.html);
+        //document.title = e.state.pageTitle;
+        //$App.init();
     }
 };
