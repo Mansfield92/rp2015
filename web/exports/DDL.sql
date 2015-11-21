@@ -36,6 +36,7 @@ CREATE TABLE Depo
 	stat VARCHAR(50),
 	telefon VARCHAR(20),
 	kapacita INT,
+	img_url VARCHAR(100),
 	PRIMARY KEY (id),
 	UNIQUE UQ_Depo_id(id)
 
@@ -161,6 +162,7 @@ CREATE TABLE Vlak
 	brvaha_g FLOAT(5,2),
 	brvaha_p FLOAT(5,2),
 	depo INT NOT NULL,
+	img_url VARCHAR(100),
 	PRIMARY KEY (cislo_zkv),
 	UNIQUE UQ_Vlak_cislo_zkv(cislo_zkv),
 	KEY (depo)
@@ -199,6 +201,7 @@ CREATE TABLE Zamestnanec
 	login VARCHAR(50),
 	password VARCHAR(60),
 	smlouva_do DATE,
+	img_url VARCHAR(100),
 	PRIMARY KEY (id),
 	UNIQUE UQ_Zamestnanec_id(id),
 	KEY (role),

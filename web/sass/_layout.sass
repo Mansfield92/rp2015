@@ -51,7 +51,7 @@ p
       position: absolute
       padding-left: 0
 
-.btn-basic
+%btn-basic
   font-weight: bold
   padding: 15px 30px
   background: $color-dark
@@ -84,7 +84,10 @@ p
     +media($tablet)
       margin-top: 20px
 
-input[type='text']
+.btn-basic
+  @extend %btn-basic
+
+%basic-input
   display: block
   padding: 15px 30px
   border: none
@@ -100,3 +103,10 @@ input[type='text']
     &:focus
       //box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2) inset, 0 0 4px rgba(255, 255, 255, 0.6)
       box-shadow: 0 0 7px rgba(0, 0, 0, 1)
+
+//input[type='text'], input[type="file"]
+//  @extend %basic-input
+
+//.add_form__row
+//  > div
+//    @extend %basic-input

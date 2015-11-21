@@ -6,9 +6,9 @@
             case 'list':
                 ?>
                 <section class="trains">
-                    <div class="container container-back">
-                        <button class="btn-back btn-basic" onclick="window.history.back();$App.init();">Zpět</button>
-                    </div>
+<!--                    <div class="container container-back">-->
+<!--                        <button class="btn-back btn-basic" onclick="window.history.back();$App.init();">Zpět</button>-->
+<!--                    </div>-->
                     <div class="container">
                         <button class="btn-actions btn-add ajax-action" data-action="trains-add_form"> Přidat nový</button>
                         <div class="search-row">
@@ -82,7 +82,9 @@
                     echo "<section class='trains'><div class='container'><div class='add_form'>";
                     while ($row = $query->fetch_assoc()) {
                         $type = $row['Type'];
-                        if($type != 'date') {
+                        if($row['Field'] == 'img_url'){
+                            echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><button id='upload_link' data-name='$row[Field]'>Choose File</button></div>";
+                        }elseif($type != 'date') {
                             $size = substr($type, stripos($type, '(') + 1, (stripos($type, ')') - stripos($type, '(')) - 1);
                             $type = substr($type, 0, stripos($type, '('));
 //                            echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><input type='text' name='$row[Field]' value='' placeholder='$row[Field]' /></div>";

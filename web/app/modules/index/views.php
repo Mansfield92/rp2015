@@ -1,6 +1,6 @@
 <section class="index">
     <div class="container" id="grid">
-        <div class="grid-item icons icon-depot" data-action="depos-list">
+        <div class="grid-item icons icon-depot" data-action="depo-list">
             <img src="icons/depo_small.svg" />
             <div class="grid-item_text">
                 Depa

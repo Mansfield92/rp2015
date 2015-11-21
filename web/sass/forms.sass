@@ -22,7 +22,24 @@
         width: 150px
 
     input
+      @extend %basic-input
       width: 100%
       +media($phone)
         width: calc(100% - 170px)
         margin-left: 170px
+    > div
+      +media($phone)
+        width: calc(100% - 170px) !important
+        margin-left: 170px !important
+      input
+        cursor: pointer
+      &:hover
+        button
+          color: $color-black
+          &:before
+            +scaleX(1)
+    button
+      cursor: pointer
+      //@extend %basic-input
+      @extend %btn-basic
+      text-align: left

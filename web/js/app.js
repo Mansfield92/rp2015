@@ -3,7 +3,7 @@
  */
 var $App = $App || {};
 
-$App.titles = {'default': 'Dashboard', 'trains-list': 'Seznam Vlaku', 'trains-add_form': 'Přidání vlaku'};
+$App.titles = {'default': 'Dashboard', 'trains-list': 'Seznam Vlaku', 'trains-add_form': 'Přidání vlaku', 'reports-list': 'Seznam reportů'};
 
 $(function () {
     $.fn.center = function () {
@@ -43,6 +43,31 @@ function show_loader() {
     $("#loader").show();
 }
 
+function loadingmessage(msg, show_hide) {
+    if (show_hide == "show") {
+        $('#uploaded_image').html('');
+    } else if (show_hide == "hide") {
+    } else {
+        $('#uploaded_image').html('');
+    }
+}
+
+function fullLenght(elem){
+    elem = elem.toString();
+    return elem.length == 1 ? ("0" + elem) : elem
+}
+
+function timestamp(){
+    var d = new Date();
+    var day = fullLenght(d.getDate());
+    var month= fullLenght(d.getMonth() + 1);
+    var year = d.getFullYear();
+    var hours = fullLenght(d.getHours());
+    var minutes = fullLenght(d.getMinutes());
+    var seconds = fullLenght(d.getSeconds());
+    return ("" + year+month+day+"_"+hours+minutes+seconds);
+}
+
 $App.getAjaxData = function (target, data) {
     if (typeof(data) === 'undefined') {
         data = {view: target};
@@ -63,6 +88,7 @@ $App.getAjaxData = function (target, data) {
 
 $App.loadPage = function (module, view) {
     var response = $App.getAjaxData(module, {view: view});
+    response = response.indexOf('section') == -1 ? '<section><div class="container">Spatna stranka, pico! :D (Modul neexistuje)</div></section>' : response;
     window.history.pushState({"html": response, "pageTitle": module + view}, "", "#" + module + "-" + view);
     $App.body.replaceWith(response);
     $App.body = $('body').find('> section');
@@ -105,7 +131,25 @@ $App.executeOperation = function (module, $data) {
 };
 
 $App.dynamic = function () {
-    //$('.datepicker').dat;
+    $('.datepicker').datepicker();
+    $App.myUpload = $('#upload_link').upload({
+        name: 'image',
+        action: 'app/modules/image_upload/image_handling.php',
+        enctype: 'multipart/form-data',
+        autoSubmit: false,
+        onSubmit: function () {
+            $('#upload_link').html('Choose File');
+        },
+        onSelect: function(){
+            $('#upload_link').html($('input[name="image"]').val());
+        }
+    });
+    $('.load-page').unbind('click').bind('click',function () {
+        var $action = $(this).data('action');
+        $action = $action.split('-');
+        log($action);
+        $App.loadPage($action[0], $action[1]);
+    });
     $('.ajax-action').unbind('click').bind('click', function () {
         var $action = $(this).data('action');
         $action = $action.split('-');
@@ -116,6 +160,16 @@ $App.dynamic = function () {
             $('.add_form__row input').each(function () {
                 $data += $(this).attr('name') + "[^]" + $(this).val() + "$^$";
             });
+            if($('#upload_link').length > 0) {
+                var $filename = timestamp();
+                var $ext = $('input[name="image"]').val();
+                $ext = $ext.substr($ext.lastIndexOf('.'));
+                log($filename+ "" + $ext);
+                $App.myUpload.set({
+                    params: {upload: 'Upload',filename: $filename}
+                });
+                $App.myUpload.submit();
+            }
             var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)});
             log($response);
             log($response["json"]);
@@ -145,11 +199,11 @@ $App.init = function () {
                 $action = $action.split('-');
                 $App.loadPage($action[0], $action[1]);
             });
+            $App.dynamic();
         } else {
             F5();
         }
     }
-    $App.dynamic();
 };
 
 $(document).ready(function () {
