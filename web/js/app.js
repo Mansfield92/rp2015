@@ -131,7 +131,7 @@ $App.executeOperation = function (module, $data) {
 };
 
 $App.dynamic = function () {
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
     $App.myUpload = $('#upload_link').upload({
         name: 'image',
         action: 'app/modules/image_upload/image_handling.php',
@@ -157,8 +157,11 @@ $App.dynamic = function () {
             $App.loadPage($action[0], $action[1]);
         } else {
             var $data = "";
-            $('.add_form__row input').each(function () {
-                $data += $(this).attr('name') + "[^]" + $(this).val() + "$^$";
+            $('.add_form__row > input').each(function () {
+                //if($(this).find('#upload_link').length > 0) {}
+                //else{
+                    $data += $(this).attr('name') + "[^]" + $(this).val() + "$^$";
+                //}
             });
             if($('#upload_link').length > 0) {
                 var $filename = timestamp();
@@ -169,14 +172,12 @@ $App.dynamic = function () {
                     params: {upload: 'Upload',filename: $filename}
                 });
                 $App.myUpload.submit();
+                $data += "img_url[^]" + $filename+$ext + "$^$";
             }
             var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)});
             log($response);
             log($response["json"]);
-            //log(toJSON($response));
-            //log(jsonp($response));
             log($response[0]);
-            //log($response.module + ";" + $response.operation + ";" + $response.response );
         }
     });
 };
@@ -213,6 +214,7 @@ $(document).ready(function () {
 window.onpopstate = function (e) {
     //$App.init();
     if (e.state) {
+        F5();
         //console.log(e.state.html);
         //$App.body.replaceWith(e.state.html);
         //document.title = e.state.pageTitle;

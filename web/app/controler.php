@@ -22,8 +22,8 @@ switch ($operation) {
         }
         $query = $query . substr($keys, 0, count($keys) - 2) . ") VALUES (" . substr($values, 0, count($values) - 2) . ")";
         $result = $con->query($query);
-        $return = array("response" => $result, "module" => $module, "operation" => $operation);
-        $return["json"] = json_encode($return);
+        $return = array("response" => $result, "module" => $module, "operation" => $operation, "query" => $query);
+//        $return["json"] = json_encode($return);
         echo json_encode($return);
         break;
     case 'delete':
