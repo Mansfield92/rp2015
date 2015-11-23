@@ -92,7 +92,8 @@ $App.loadPage = function (module, view) {
     window.history.pushState({"html": response, "pageTitle": module + view}, "", "#" + module + "-" + view);
     $App.body.replaceWith(response);
     $App.body = $('body').find('> section');
-    document.title = $App.titles[module + '-' + view];
+    log($App.titles[module + '-' + view] === undefined);
+    document.title = $App.titles[module + '-' + view] === undefined ? (module + '-' + view) : $App.titles[module + '-' + view];
     $App.dynamic();
 };
 
@@ -144,6 +145,20 @@ $App.dynamic = function () {
             $('#upload_link').html($('input[name="image"]').val());
         }
     });
+    $('#search').keyup(function(){
+        var valThis = $(this).val().toString();
+        valThis = valThis.toLowerCase();
+        console.log(valThis);
+        $('.train-list_item').each(function(){
+            var text = $(this).data('search').toString();
+            text = text.toLowerCase();
+            if(text.indexOf(valThis) != -1){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        });
+    });
     $('.load-page').unbind('click').bind('click',function () {
         var $action = $(this).data('action');
         $action = $action.split('-');
@@ -156,28 +171,31 @@ $App.dynamic = function () {
         if ($action.length == 2) {
             $App.loadPage($action[0], $action[1]);
         } else {
-            var $data = "";
-            $('.add_form__row > input').each(function () {
-                //if($(this).find('#upload_link').length > 0) {}
-                //else{
+            if($action[2] == 'delete'){
+                var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], delete: $(this).data('delete')});
+                alert($response);
+            }else {
+                var $data = "";
+                $('.add_form__row > input').each(function () {
                     $data += $(this).attr('name') + "[^]" + $(this).val() + "$^$";
-                //}
-            });
-            if($('#upload_link').length > 0) {
-                var $filename = timestamp();
-                var $ext = $('input[name="image"]').val();
-                $ext = $ext.substr($ext.lastIndexOf('.'));
-                log($filename+ "" + $ext);
-                $App.myUpload.set({
-                    params: {upload: 'Upload',filename: $filename}
                 });
-                $App.myUpload.submit();
-                $data += "img_url[^]" + $filename+$ext + "$^$";
+                if ($('#upload_link').length > 0) {
+                    var $filename = timestamp();
+                    var $ext = $('input[name="image"]').val();
+                    $ext = $ext.substr($ext.lastIndexOf('.'));
+                    log($filename + "" + $ext);
+                    $App.myUpload.set({
+                        params: {upload: 'Upload', filename: $filename}
+                    });
+                    $App.myUpload.submit();
+                    log('dopici');
+                    $data += "img_url[^]" + $filename + $ext + "$^$";
+                }
+                var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)});
+                log($response);
+                log($response["json"]);
+                log($response[0]);
             }
-            var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)});
-            log($response);
-            log($response["json"]);
-            log($response[0]);
         }
     });
 };

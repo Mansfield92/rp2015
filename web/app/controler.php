@@ -2,7 +2,7 @@
 
 header('Content-Type: application/json');
 
-$data = $_POST['data'];
+$data = isset($_POST['data']) ? $_POST['data'] : false;
 $operation = $_POST['operation'];
 $module = $_POST['module'];
 $mapping = array('trains'=>'vlak');
@@ -27,6 +27,7 @@ switch ($operation) {
         echo json_encode($return);
         break;
     case 'delete':
-//        $
+        $delete = $_POST['delete'];
+        echo $delete;
         break;
 }

@@ -19,7 +19,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                     <?php $query = "SELECT cislo_zkv, rada, datum_preznaceni, flag_eko, km_probeh_po, vmax, delka,img_url from vlak";
                     $query = $con->query($query);
                     while ($row = $query->fetch_assoc()) { ?>
-                        <div class="train-list_item">
+                        <div class="train-list_item" data-search="<?php echo $row['cislo_zkv']; ?>">
                             <div class="train-list_item_column">
                                 <img src="upload_pic/<?php echo $row['img_url']; ?>" alt=""/>
                             </div><div class="train-list_item_column">
@@ -74,8 +74,32 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
             break;
         case
             'detail':
-                echo "<section class=\"trains\"><div class=\"container\">sracka</div></section>";
-                break;
+                echo "<section>";
+                $query = $con->query("SELECT * from vlak WHERE cislo_zkv = '$id'");
+                $fieldCount = ($query->field_count);
+                $fieldCount = round(($fieldCount-2)/2);
+//                $fieldCount = ($fieldCount-2)/2;
+                $rows = $con->query("SHOW COLUMNS from vlak");
+                $data = $query->fetch_assoc();
+                echo "<div class='container'><div class='train-header'>ID: $data[cislo_zkv]</div>";
+                echo "<img class='train-detail' alt='train' src='upload_pic/$data[img_url]'><div class='train-description'>";
+                $i = 0;
+                while ($row = $rows->fetch_assoc()) {
+                    if($row['Field'] != 'cislo_zkv' && $row['Field'] != 'img_url'){
+//                        echo $i."==".$fieldCount;
+                        if($i++ == $fieldCount){
+                            echo "</div><div class='train-description train-description_right'>";
+                        }
+                        $key = $row['Field'];
+                        echo "<div class='train-description_item'><span class='train-label'>$key: </span>$data[$key]</div>";
+                    }
+                }
+                echo "</div>";
+                echo "<button class='btn-actions ajax-action'>Uložit</button>";
+                echo "<button class='btn-actions ajax-action' data-action='trains-operation-delete' data-delete='$data[cislo_zkv]'>Smazat</button>";
+                echo "<button class='btn-actions load-page' data-action='trains-list'>Zpět na seznam</button>";
+                echo "</div></section>";
+            break;
                 ?>
     <?php endswitch ?>
 <?php }
