@@ -80,25 +80,29 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                 $fieldCount = round(($fieldCount-2)/2);
 //                $fieldCount = ($fieldCount-2)/2;
                 $rows = $con->query("SHOW COLUMNS from vlak");
-                $data = $query->fetch_assoc();
-                echo "<div class='container'><div class='train-header'>ID: $data[cislo_zkv]</div>";
-                echo "<img class='train-detail' alt='train' src='upload_pic/$data[img_url]'><div class='train-description'>";
-                $i = 0;
-                while ($row = $rows->fetch_assoc()) {
-                    if($row['Field'] != 'cislo_zkv' && $row['Field'] != 'img_url'){
+                if($query->num_rows > 0) {
+                    $data = $query->fetch_assoc();
+                    echo "<div class='container'><div class='train-header'>ID: $data[cislo_zkv]</div>";
+                    echo "<img class='train-detail' alt='train' src='upload_pic/$data[img_url]'><div class='train-description'>";
+                    $i = 0;
+                    while ($row = $rows->fetch_assoc()) {
+                        if ($row['Field'] != 'cislo_zkv' && $row['Field'] != 'img_url') {
 //                        echo $i."==".$fieldCount;
-                        if($i++ == $fieldCount){
-                            echo "</div><div class='train-description train-description_right'>";
+                            if ($i++ == $fieldCount) {
+                                echo "</div><div class='train-description train-description_right'>";
+                            }
+                            $key = $row['Field'];
+                            echo "<div class='train-description_item'><span class='train-label'>$key: </span>$data[$key]</div>";
                         }
-                        $key = $row['Field'];
-                        echo "<div class='train-description_item'><span class='train-label'>$key: </span>$data[$key]</div>";
                     }
+                    echo "</div>";
+                    echo "<button class='btn-actions ajax-action'>Uložit</button>";
+                    echo '<button class="btn-actions ajax-action" data-action="trains-operation-delete" data-delete="cislo_zkv=\''.$data['cislo_zkv'].'\'" data-reload="list">Smazat</button>';
+                    echo "<button class='btn-actions load-page' data-action='trains-list'>Zpět na seznam</button></div>";
+                }else{
+                    echo "<div class='container'>Záznam neexistuje</div>";
                 }
-                echo "</div>";
-                echo "<button class='btn-actions ajax-action'>Uložit</button>";
-                echo "<button class='btn-actions ajax-action' data-action='trains-operation-delete' data-delete='$data[cislo_zkv]'>Smazat</button>";
-                echo "<button class='btn-actions load-page' data-action='trains-list'>Zpět na seznam</button>";
-                echo "</div></section>";
+                echo "</section>";
             break;
                 ?>
     <?php endswitch ?>

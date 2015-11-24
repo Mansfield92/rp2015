@@ -21,8 +21,8 @@ if ($login->is_logged != 1) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo $page["title"]; ?></title>
+    <link href="css/jquery-ui.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/vader/jquery-ui-1.9.2.custom.css" rel="stylesheet">
     <link href="css/main.min.css" rel="stylesheet">
     <link href="img/favicon.png" rel="icon" type="image/png" />
     <!--[if lt IE 9]>

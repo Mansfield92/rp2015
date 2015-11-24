@@ -5,69 +5,6 @@ var $App = $App || {};
 
 $App.titles = {'default': 'Dashboard', 'trains-list': 'Seznam Vlaku', 'trains-add_form': 'Přidání vlaku', 'reports-list': 'Seznam reportů'};
 
-$(function () {
-    $.fn.center = function () {
-        this.css("position", "absolute");
-        this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop() / 2) + "px");
-        this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
-        return this;
-    };
-    $.fn.centerTop = function () {
-        this.css("marginTop", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop() / 2) + "px");
-        return this;
-    };
-});
-
-function logout() {
-    $.post('#', {logout: true}, function (data) {
-        F5();
-    });
-}
-
-function log(msg) {
-    console.log(msg);
-}
-
-function F5() {
-    window.location.reload(true);
-}
-
-function destroy_loader() {
-    $("#loader").hide();
-    $("#loader_back").fadeOut('slow');
-}
-
-function show_loader() {
-    $("#loader").center();
-    $("#loader_back").show();
-    $("#loader").show();
-}
-
-function loadingmessage(msg, show_hide) {
-    if (show_hide == "show") {
-        $('#uploaded_image').html('');
-    } else if (show_hide == "hide") {
-    } else {
-        $('#uploaded_image').html('');
-    }
-}
-
-function fullLenght(elem){
-    elem = elem.toString();
-    return elem.length == 1 ? ("0" + elem) : elem
-}
-
-function timestamp(){
-    var d = new Date();
-    var day = fullLenght(d.getDate());
-    var month= fullLenght(d.getMonth() + 1);
-    var year = d.getFullYear();
-    var hours = fullLenght(d.getHours());
-    var minutes = fullLenght(d.getMinutes());
-    var seconds = fullLenght(d.getSeconds());
-    return ("" + year+month+day+"_"+hours+minutes+seconds);
-}
-
 $App.getAjaxData = function (target, data) {
     if (typeof(data) === 'undefined') {
         data = {view: target};
@@ -92,36 +29,34 @@ $App.loadPage = function (module, view) {
     window.history.pushState({"html": response, "pageTitle": module + view}, "", "#" + module + "-" + view);
     $App.body.replaceWith(response);
     $App.body = $('body').find('> section');
-    log($App.titles[module + '-' + view] === undefined);
+    //log($App.titles[module + '-' + view] === undefined);
     document.title = $App.titles[module + '-' + view] === undefined ? (module + '-' + view) : $App.titles[module + '-' + view];
     $App.dynamic();
 };
 
-$App.executeOperation = function (module, $data) {
+$App.executeOperation = function (module, $data, $reload) {
     var getData = $.ajax({
         dataType: 'json',
         type: 'POST',
         url: "app/controler.php",
         data: $data,
         success: function (data) {
-            switch ($data){
+            switch ($data.operation){
                 case 'insert':
-
+                    if (data["response"] !== false) {
+                        getData = data;
+                        utils.showDialog('Položka byla úspěšně vložena','Chyba',true,true);
+                    }else{
+                        // @TODO pokud se form neodesle
+                        utils.showDialog('Nepodařilo se uložit záznam','Chyba',true,true);
+                    }
                     break;
                 case 'update':
 
                     break;
                 case 'delete':
-
+                    $('<div id="dialog">').appendTo('body');$('#dialog').html('').html('<p>Proveden dotaz: ' + data.query + '</p>');$("#dialog").dialog({modal: true,title: 'Info',width: 'auto',draggable: true,buttons: {Ok: function () {utils.showDialog.removeDialog();$App.loadPage(module,$reload)}},close: function (event, ui){utils.showDialog.removeDialog();$App.loadPage(module,$reload);}});
                     break;
-            }
-            if (data["response"] !== false) {
-                getData = data;
-                log(data["operation"]);
-            }else{
-                // @TODO pokud se form neodesle
-                log('error');
-                log($data.operation);
             }
         },
         async: false,
@@ -148,7 +83,6 @@ $App.dynamic = function () {
     $('#search').keyup(function(){
         var valThis = $(this).val().toString();
         valThis = valThis.toLowerCase();
-        console.log(valThis);
         $('.train-list_item').each(function(){
             var text = $(this).data('search').toString();
             text = text.toLowerCase();
@@ -162,7 +96,6 @@ $App.dynamic = function () {
     $('.load-page').unbind('click').bind('click',function () {
         var $action = $(this).data('action');
         $action = $action.split('-');
-        log($action);
         $App.loadPage($action[0], $action[1]);
     });
     $('.ajax-action').unbind('click').bind('click', function () {
@@ -172,8 +105,14 @@ $App.dynamic = function () {
             $App.loadPage($action[0], $action[1]);
         } else {
             if($action[2] == 'delete'){
-                var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], delete: $(this).data('delete')});
-                alert($response);
+                var $del = $(this).data('delete');
+                var $reload = $(this).data('reload');
+                $('<div id="dialog">').appendTo('body');
+                $('#dialog').html('').html('<p>Opravdu chcete vymazat tuto položku?</p>');
+                $("#dialog").dialog({modal: true,title: 'Mazání',width: 'auto',draggable: true,buttons: {
+                    Ok: function () {utils.showDialog.removeDialog();$App.executeOperation($action[0], {operation: $action[2], module: $action[0], delete: $del},$reload);},
+                    Cancel: function(){utils.showDialog.removeDialog();}},close: function (event, ui){utils.showDialog.removeDialog();}}
+                );
             }else {
                 var $data = "";
                 $('.add_form__row > input').each(function () {
@@ -182,19 +121,21 @@ $App.dynamic = function () {
                 if ($('#upload_link').length > 0) {
                     var $filename = timestamp();
                     var $ext = $('input[name="image"]').val();
-                    $ext = $ext.substr($ext.lastIndexOf('.'));
-                    log($filename + "" + $ext);
-                    $App.myUpload.set({
-                        params: {upload: 'Upload', filename: $filename}
-                    });
-                    $App.myUpload.submit();
-                    log('dopici');
-                    $data += "img_url[^]" + $filename + $ext + "$^$";
+                    if($ext.length < 3){
+                        utils.showDialog('error','error kurva pica',true,true);
+                        return false;
+                    }else {
+                        $ext = $ext.substr($ext.lastIndexOf('.'));
+                        log($filename + "" + $ext);
+                        $App.myUpload.set({
+                            params: {upload: 'Upload', filename: $filename}
+                        });
+                        $App.myUpload.submit();
+                        $data += "img_url[^]" + $filename + $ext + "$^$";
+                        $('input[name="image"]').val('');
+                    }
                 }
                 var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)});
-                log($response);
-                log($response["json"]);
-                log($response[0]);
             }
         }
     });
@@ -204,11 +145,9 @@ $App.dynamic = function () {
 $App.init = function () {
     $App.body = $('body').find('> section');
     var $path = window.location.href.toString();
-    console.log($path);
     $path = $path.substr($path.lastIndexOf('/') + 1);
     if ($path.length > 0) {
         $path = $path.substr(1);
-        console.log($path);
         var $modules = $path.split('-');
         $App.loadPage($modules[0], $modules[1]);
     } else {

@@ -28,6 +28,8 @@ switch ($operation) {
         break;
     case 'delete':
         $delete = $_POST['delete'];
-        echo $delete;
+        $query = "DELETE FROM $mapping[$module] WHERE $delete";
+        $return = array("response" => $con->query($query), "module" => $module, "operation" => $operation, "query" => $query);
+        echo json_encode($return);
         break;
 }
