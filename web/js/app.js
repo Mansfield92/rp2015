@@ -24,6 +24,7 @@ $App.getAjaxData = function (target, data) {
 };
 
 $App.loadPage = function (module, view) {
+    show_loader();
     var response = $App.getAjaxData(module, {view: view});
     response = response.indexOf('section') == -1 ? '<section><div class="container">Spatna stranka, pico! :D (Modul neexistuje)</div></section>' : response;
     window.history.pushState({"html": response, "pageTitle": module + view}, "", "#" + module + "-" + view);
@@ -35,6 +36,7 @@ $App.loadPage = function (module, view) {
 };
 
 $App.executeOperation = function (module, $data, $reload) {
+    show_loader();
     var getData = $.ajax({
         dataType: 'json',
         type: 'POST',
@@ -52,10 +54,16 @@ $App.executeOperation = function (module, $data, $reload) {
                     }
                     break;
                 case 'update':
-
+                    if(data['response']){
+                        F5();
+                    }else utils.showDialog('Response ' + data['response'],'Info',true,true);
                     break;
                 case 'delete':
                     $('<div id="dialog">').appendTo('body');$('#dialog').html('').html('<p>Proveden dotaz: ' + data.query + '</p>');$("#dialog").dialog({modal: true,title: 'Info',width: 'auto',draggable: true,buttons: {Ok: function () {utils.showDialog.removeDialog();$App.loadPage(module,$reload)}},close: function (event, ui){utils.showDialog.removeDialog();$App.loadPage(module,$reload);}});
+                    break;
+                case 'login_role':
+                    //utils.showDialog('Login role je: ' + data["role"],'Chyba',true,true);
+                    $App.login_role = parseInt(data["role"]);
                     break;
             }
         },
@@ -67,6 +75,8 @@ $App.executeOperation = function (module, $data, $reload) {
 };
 
 $App.dynamic = function () {
+    $App.executeOperation('login',{operation: 'login_role',module: 'login'});
+
     $('.datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
     $App.myUpload = $('#upload_link').upload({
         name: 'image',
@@ -115,16 +125,17 @@ $App.dynamic = function () {
                 );
             }else {
                 var $data = "";
-                $('.add_form__row > input').each(function () {
+                $('.add_form__row > input, .train-description_item > input').each(function () {
                     $data += $(this).attr('name') + "[^]" + $(this).val() + "$^$";
                 });
+                //log($action[0] + " = " + $action[1] + " = " + $action[2]);
                 if ($('#upload_link').length > 0) {
                     var $filename = timestamp();
                     var $ext = $('input[name="image"]').val();
-                    if($ext.length < 3){
+                    if($ext.length < 3 && $action[2] == 'insert'){
                         utils.showDialog('error','error kurva pica',true,true);
                         return false;
-                    }else {
+                    }else if($ext.length > 3) {
                         $ext = $ext.substr($ext.lastIndexOf('.'));
                         log($filename + "" + $ext);
                         $App.myUpload.set({
@@ -135,8 +146,33 @@ $App.dynamic = function () {
                         $('input[name="image"]').val('');
                     }
                 }
-                var $response = $App.executeOperation($action[0], {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)});
+                var $params;
+                if($action[2] == 'update') {
+                    var data_id = $(this).data('id');
+                    $params = {id: data_id, operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
+                }else $params = {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
+                var $response = $App.executeOperation($action[0], $params);
+                log($response);
             }
+        }
+    });
+    if($App.login_role >= 2){
+        $App.adminizer();
+    }
+    setTimeout(function(){destroy_loader()},200);
+};
+
+$App.adminizer = function(){
+    $('.adminizer').each(function () {
+        var $this = $(this);
+        var $html = $this.html();
+        var $datepic = $this.hasClass('datepick');
+        var $name = $this.data('name');
+        if($datepic) {
+            $this.replaceWith('<input class="datepic" name="'+$name+'" type="text" value="' + $html + '" />');
+            $('.datepic').datepicker({ dateFormat: 'yy-mm-dd' });
+        }else{
+            $this.replaceWith('<input type="text" name="'+$name+'" value="' + $html + '" />');
         }
     });
 };
@@ -165,6 +201,7 @@ $App.init = function () {
 };
 
 $(document).ready(function () {
+    show_loader();
     $App.init();
 });
 

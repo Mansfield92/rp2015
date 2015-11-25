@@ -9,6 +9,21 @@ section
     border: 10px solid rgba(255,255,255,0.85)
   +media($tablet)
     border-width: 20px
+  & + div
+    width: 100% !important
+    cursor: pointer
+    input
+      cursor: pointer
+    &:hover
+      button
+        color: $color-black
+        &:before
+          +scaleX(1)
+
+button
+  cursor: pointer
+  @extend %btn-basic
+  text-align: left
 
 .train-description
   margin-top: 10px
@@ -32,6 +47,7 @@ section
     margin-bottom: 5px
     //font-size: 18px
     //text-align: center
+    position: relative
     +transition(0.5s)
 
     +media($tablet)
@@ -53,16 +69,24 @@ section
       &:last-of-type
         margin-bottom: 0
 
-    span
-      font-weight: bold
-      display: inline-block
-      //width: 100%
-      text-align: center
-
-      +media($tablet)
-        padding-right: 18px
-        width: auto
+    span.train-label
+      width: 100%
+      text-align: left
+      line-height: 45px
+      +media($phone)
         text-align: right
+        position: absolute
+        left: 0
+        width: 150px
+        padding-right: 20px
+    span:not(.train-label), input
+      @extend %basic-input
+      width: 100%
+      height: 45px
+      +media($phone)
+        width: calc(100% - 170px)
+        margin-left: 170px
+
   &:last-of-type
     margin-top: 0
     padding-top: 0

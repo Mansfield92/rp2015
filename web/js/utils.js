@@ -8,6 +8,12 @@ $(function () {
         this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
         return this;
     };
+    $.fn.centerLoader = function () {
+        this.css("position", "fixed");
+        this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2)) + "px");
+        this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) ) + "px");
+        return this;
+    };
     $.fn.centerTop = function () {
         this.css("marginTop", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop() / 2) + "px");
         return this;
@@ -34,7 +40,7 @@ function destroy_loader() {
 }
 
 function show_loader() {
-    $("#loader").center();
+    $("#loader").centerLoader();
     $("#loader_back").show();
     $("#loader").show();
 }

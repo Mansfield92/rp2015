@@ -31,6 +31,9 @@ if ($login->is_logged != 1) {
     <![endif]-->
 </head>
 <body>
+<div id="loader_back" class="ui-widget-overlay ui-front">
+    <div id="loader" class="ui-front"><img src="img/loading.gif" alt="loader"/></div>
+</div>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
