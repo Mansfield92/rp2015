@@ -51,11 +51,11 @@ if ($login->is_logged != 1) {
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="bs-example-navbar-collapse-8" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a class="load-page" data-action="depo-list">Depa</a></li>
-                <li><a class="load-page" data-action="trains-list">Lokomotivy</a></li>
-                <li><a class="load-page" data-action="users-list">Zaměstnanci</a></li>
-                <li><a class="load-page" data-action="servis-list">Servis</a></li>
-                <li><a class="load-page" data-action="reports-list">Reporty</a></li>
+                <li><a class="load-page" href="#" data-action="depo-list">Depa</a></li>
+                <li><a class="load-page" href="#" data-action="trains-list">Lokomotivy</a></li>
+                <li><a class="load-page" href="#" data-action="users-list">Zaměstnanci</a></li>
+                <li><a class="load-page" href="#" data-action="servis-list">Servis</a></li>
+                <li><a class="load-page" href="#" data-action="reports-list">Reporty</a></li>
                 <li class="icon-menu"><a href="#" onclick="logout();"><img src="icons/profile_white.svg" height="25px" />Profil</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
