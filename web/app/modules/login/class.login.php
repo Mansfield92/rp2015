@@ -1,7 +1,8 @@
 <?php
 class login {
 	var $login_name,$login_pw,$is_logged,$checktimelimit,$session_string,$bug,$role;
-    private $users = array(array('name'=>'Neo','pw'=>'lamer'),array('name'=>'admin','pw'=>'lamer'));
+    private $users = array(array('name'=>'Neo','pw'=>'lamer','role'=>1),array('name'=>'admin','pw'=>'lamer','role'=>3));
+	private $roles = array('Neo'=>1,'admin'=>3);
 
 	function login(){
 		$this->checktimelimit=(15*60);
@@ -35,7 +36,7 @@ class login {
 		$this->session_string = md5($this->login_name.$this->login_pw);
 		$_SESSION['login_name'] = $_POST['login_name'];
 		$_SESSION['login_pw'] = $_POST['login_pw'];
-		$_SESSION['login_role'] = 3;
+		$_SESSION['login_role'] = $this->roles[$_POST['login_name']];
 		$_SESSION['session_string'] = md5($this->login_name.$this->login_pw);
 	}
 

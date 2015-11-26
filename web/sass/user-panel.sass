@@ -1,13 +1,42 @@
 .user-panel
   display: none
-  background: $color-white
+  background: $transparent-back
   position: absolute
-  width: 300px
+  width: 450px
   top: 51px
   right: 0
 
+  &-left, &-right
+    display: inline-block
+    vertical-align: middle
+    padding: 20px
+
+  &-left
+    width: 200px
+    img
+      display: block
+      +size(160px,160px)
+      border-radius: 50%
+
+  &-right
+    width: 250px
+
+  &-text
+    text-align: center
+    text-transform: uppercase
+    +font(24px, 32px)
+
+  //&-right
+  .btn-actions
+    width: 100%
+    text-align: center
+    margin: 5px 0 0
+    +media($tablet)
+      margin: 10px 0 0
+
 .icon-menu
   position: relative
-  &:hover
-    .user-panel
-      display: block
+  +media($tablet)
+    &:hover
+      .user-panel
+        display: block

@@ -11,7 +11,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
     <?php switch ($view): ?><?php case 'list': ?>
         <section class="trains">
             <div class="container">
-                <button class="btn-actions btn-add ajax-action" data-action="trains-add_form"> Přidat nový</button>
+                <button class="btn-actions btn-add ajax-action" data-action="trains-add_form"> Přidat lokomotivu</button>
                 <div class="search-row">
                     <input type="text" id="search" class="form-control" placeholder="Zadejte hledané číslo vlaku">
                 </div>

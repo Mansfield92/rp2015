@@ -51,12 +51,24 @@ if ($login->is_logged != 1) {
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="bs-example-navbar-collapse-8" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a class="load-page" data-action="depo-list">Depa</a></li>
-                <li><a class="load-page" data-action="trains-list">Lokomotivy</a></li>
-                <li><a class="load-page" data-action="users-list">Zaměstnanci</a></li>
-                <li><a class="load-page" data-action="servis-list">Servis</a></li>
-                <li><a class="load-page" data-action="reports-list">Reporty</a></li>
-                <li class="icon-menu"><a href="#" onclick="logout();"><img src="icons/profile_white.svg" height="25px" />Profil</a></li>
+                <li><a class="load-page" href="#" data-action="depo-list">Depa</a></li>
+                <li><a class="load-page" href="#" data-action="trains-list">Lokomotivy</a></li>
+                <li><a class="load-page" href="#" data-action="users-list">Zaměstnanci</a></li>
+                <li><a class="load-page" href="#" data-action="servis-list">Servis</a></li>
+                <li><a class="load-page" href="#" data-action="reports-list">Reporty</a></li>
+                <li class="icon-menu">
+                    <a href="#"><img src="icons/profile_white.svg" height="25px" />Profil</a>
+                    <div class="user-panel">
+                        <div class="user-panel-left">
+                            <img class="user-panel-avatar" src="../img/train.jpg" width="100" height="100" alt="avatar">
+                        </div><div class="user-panel-right">
+                            <div class="user-panel-text"><?php echo $_SESSION['login_name']; ?></div>
+                            <button data-user="id = 666" data-action="login-chsnge-pw" class="btn-actions ajax-action">Úprava profilu</button>
+                            <button data-user="id = 666" data-action="login-chsnge-pw" class="btn-actions ajax-action">Admin panel</button>
+                            <button onclick="logout();" class="btn-actions ajax-action">Odhlásit se</button>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div>

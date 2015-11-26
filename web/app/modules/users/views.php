@@ -1,6 +1,7 @@
 <?php
 session_start();
 include('../../config/config.db.php');
+include('../../config/config.roles.php');
 if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
     $view = $_POST['view'];
     if (strpos($view,'detail') !== false) {
@@ -11,38 +12,28 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
     <?php switch ($view): ?><?php case 'list': ?>
         <section class="users">
             <div class="container">
-                <button class="btn-actions btn-add ajax-action" data-action="users-add_form"> Přidat nový</button>
+                <button class="btn-actions btn-add ajax-action" data-action="users-add_form"> Přidat zaměstnance</button>
                 <div class="search-row">
                     <input type="text" id="search" class="form-control" placeholder="Vyhledávání podle jména a příjmení">
                 </div>
-                <div class="train-list">
-                    <?php $query = "SELECT id, jmeno, prijmeni, smlouva_od, role, email from zamestnanec";
+                <div class="users-list">
+                    <?php $query = "SELECT img_url,id, jmeno, prijmeni, smlouva_od, role, email from zamestnanec";
                     $query = $con->query($query);
                     while ($row = $query->fetch_assoc()) { ?>
-                        <div class="train-list_item" data-search="<?php echo $row['cislo_zkv']; ?>">
-                            <div class="train-list_item_column">
-                                <img src="upload_pic/<?php echo $row['img_url']; ?>" alt=""/>
-                            </div><div class="train-list_item_column">
-                                <div class="train-list_item_text">
-                                    <strong>ID:</strong> <?php echo $row['id']; ?>
+                        <div class="users-list_item" data-search="<?php echo $row['jmeno'].' '.$row['prijmeni']; ?>">
+                            <div class="users-list_item_column">
+                                <div class="users-list_item_text">
+                                    <?php echo $row['jmeno']." ".$row['prijmeni']; ?>
                                 </div>
-                                <div class="train-list_item_text">
-                                    <strong>Jméno:</strong> <?php echo $row['jmeno']; ?>
+                            </div><div class="users-list_item_column">
+                                <div class="users-list_item_text">
+                                    <?php echo $row['email'] ?>
                                 </div>
-                                <div class="train-list_item_text">
-                                    <strong>Příjmení:</strong> <?php echo $row['prijmeni']; ?>
+                            </div><div class="users-list_item_column">
+                                <div class="users-list_item_text">
+                                    <?php echo $roles[$row['role']]; ?>
                                 </div>
-                            </div><div class="train-list_item_column">
-                                <div class="train-list_item_text">
-                                    <strong>Zaměstnán od:</strong> <?php echo $row['smlouva_od']; ?>
-                                </div>
-                                <div class="train-list_item_text">
-                                    <strong>Role:</strong> <?php echo $row['role']; ?>
-                                </div>
-                                <div class="train-list_item_text">
-                                    <strong>Email:</strong> <?php echo $row['email']; ?>
-                                </div>
-                            </div><div class="train-list_item_column ajax-action" data-action="users-detail_<?php echo $row['id']; ?>">
+                            </div><div class="users-list_item_column ajax-action" data-action="users-detail_<?php echo $row['id']; ?>">
                                 <img src="icons/search.svg" alt="icon"/>
                             </div>
                         </div>
@@ -61,9 +52,13 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                     if ($row['Field'] == 'img_url') {
                         echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><button id='upload_link' data-name='$row[Field]'>Choose File</button></div>";
                     } elseif ($type != 'date') {
+                        $id = '';
+                        if($row['Field'] == 'id'){
+                            $id = 'NULL';
+                        }
                         $size = substr($type, stripos($type, '(') + 1, (stripos($type, ')') - stripos($type, '(')) - 1);
                         $type = substr($type, 0, stripos($type, '('));
-                        echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><input type='text' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";
+                        echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><input type='text' name='$row[Field]' value='$id' placeholder='$row[Type]' /></div>";
                     } else {
                         echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><input type='text' class='datepicker' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";
                     }
@@ -82,11 +77,11 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                 $rows = $con->query("SHOW COLUMNS from zamestnanec");
                 if($query->num_rows > 0) {
                     $data = $query->fetch_assoc();
-                    echo "<div class='container'><div class='train-header'>ID: $data[cislo_zkv]</div>";
-                    echo "<img class='train-detail' alt='train' src='upload_pic/$data[img_url]'><button id='upload_link' data-name='img_url'>Choose File</button><div class='train-description'>";
+                    echo "<div class='container'>";
+                    echo "<img class='train-detail' alt='User' src='upload_pic/$data[img_url]'><button id='upload_link' data-name='img_url'>Choose File</button><div class='train-description'>";
                     $i = 0;
                     while ($row = $rows->fetch_assoc()) {
-                        if ($row['Field'] != 'cislo_zkv' && $row['Field'] != 'img_url') {
+                        if ($row['Field'] != 'id' && $row['Field'] != 'img_url') {
 //                        echo $i."==".$fieldCount;
                             if ($i++ == $fieldCount) {
                                 echo "</div><div class='train-description train-description_right'>";
@@ -98,9 +93,9 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                         }
                     }
                     echo "</div>";
-                    echo '<button class="btn-actions ajax-action" data-action="trains-operation-update" data-id="cislo_zkv=\''.$data['cislo_zkv'].'\'" data-reload="detail_'.$data['cislo_zkv'].'">Uložit</button>';
-                    echo '<button class="btn-actions ajax-action" data-action="trains-operation-delete" data-delete="cislo_zkv=\''.$data['cislo_zkv'].'\'" data-reload="list">Smazat</button>';
-                    echo "<button class='btn-actions load-page' data-action='trains-list'>Zpět na seznam</button></div>";
+                    echo '<button class="btn-actions ajax-action" data-action="users-operation-update" data-id="id=\''.$data['id'].'\'" data-reload="detail_'.$data['id'].'">Uložit</button>';
+                    echo '<button class="btn-actions ajax-action" data-action="users-operation-delete" data-delete="id=\''.$data['id'].'\'" data-reload="list">Smazat</button>';
+                    echo "<button class='btn-actions load-page' data-action='users-list'>Zpět na seznam</button></div>";
                 }else{
                     echo "<div class='container'>Záznam neexistuje</div>";
                 }

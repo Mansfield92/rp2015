@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $data = isset($_POST['data']) ? $_POST['data'] : false;
 $operation = $_POST['operation'];
 $module = $_POST['module'];
-$mapping = array('trains'=>'vlak', 'users'=>'zamestnanec');
+$mapping = array('trains'=>'vlak', 'users'=>'zamestnanec', 'depo'=>'depo');
 
 include("config/config.db.php");
 

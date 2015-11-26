@@ -47,9 +47,10 @@ $App.executeOperation = function (module, $data, $reload) {
                 case 'insert':
                     if (data["response"] !== false) {
                         getData = data;
+                        destroy_loader();
                         utils.showDialog('Položka byla úspěšně vložena','Chyba',true,true);
                     }else{
-                        // @TODO pokud se form neodesle
+                        destroy_loader();
                         utils.showDialog('Nepodařilo se uložit záznam','Chyba',true,true);
                     }
                     break;
@@ -59,6 +60,7 @@ $App.executeOperation = function (module, $data, $reload) {
                     }else utils.showDialog('Response ' + data['response'],'Info',true,true);
                     break;
                 case 'delete':
+                    destroy_loader();
                     $('<div id="dialog">').appendTo('body');$('#dialog').html('').html('<p>Proveden dotaz: ' + data.query + '</p>');$("#dialog").dialog({modal: true,title: 'Info',width: 'auto',draggable: true,buttons: {Ok: function () {utils.showDialog.removeDialog();$App.loadPage(module,$reload)}},close: function (event, ui){utils.showDialog.removeDialog();$App.loadPage(module,$reload);}});
                     break;
                 case 'login_role':
@@ -93,7 +95,7 @@ $App.dynamic = function () {
     $('#search').keyup(function(){
         var valThis = $(this).val().toString();
         valThis = valThis.toLowerCase();
-        $('.train-list_item').each(function(){
+        $('.train-list_item, .users-list_item').each(function(){
             var text = $(this).data('search').toString();
             text = text.toLowerCase();
             if(text.indexOf(valThis) != -1){
@@ -103,7 +105,8 @@ $App.dynamic = function () {
             }
         });
     });
-    $('.load-page').unbind('click').bind('click',function () {
+    $('.load-page').unbind('click').bind('click',function (e) {
+        e.preventDefault();
         var $action = $(this).data('action');
         $action = $action.split('-');
         $App.loadPage($action[0], $action[1]);
