@@ -13,7 +13,8 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
             <div class="container">
                 <button class="btn-actions btn-add ajax-action" data-action="depo-add_form"> Přidat depo</button>
                 <div class="depos-list">
-                    <?php $query = "SELECT img_url,id, nazev, mesto, kapacita from depo";
+                    <?php
+                    $query = "SELECT img_url,id, nazev, mesto, kapacita from depo";
                     $query = $con->query($query);
                     while ($row = $query->fetch_assoc()) { ?>
                         <div class="depos-list_item">

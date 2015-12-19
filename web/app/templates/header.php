@@ -63,7 +63,7 @@ if ($login->is_logged != 1) {
                             <img class="user-panel-avatar" src="../img/train.jpg" width="100" height="100" alt="avatar">
                         </div><div class="user-panel-right">
                             <div class="user-panel-text"><?php echo $_SESSION['login_name']; ?></div>
-                            <button data-user="id = 666" data-action="login-chsnge-pw" class="btn-actions ajax-action">Úprava profilu</button>
+                            <button data-user="id = 666" data-action="login-change-profile" class="btn-actions ajax-action">Úprava profilu</button>
                             <button data-user="id = 666" data-action="login-chsnge-pw" class="btn-actions ajax-action">Admin panel</button>
                             <button onclick="logout();" class="btn-actions ajax-action">Odhlásit se</button>
                         </div>

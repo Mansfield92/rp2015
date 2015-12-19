@@ -1,7 +1,7 @@
 section
   position: relative
 
-.train-detail
+.train-detail, .user-detail
   width: 100%
   min-width: 100%
   display: block
@@ -12,6 +12,7 @@ section
   & + div
     width: 100% !important
     cursor: pointer
+    text-align: center
     input
       cursor: pointer
     &:hover
@@ -19,6 +20,14 @@ section
         color: $color-black
         &:before
           +scaleX(1)
+
+.user-detail
+  width: auto
+  min-width: auto
+  margin: 0 auto
+
+#upload_link
+  margin: 0 auto
 
 button
   cursor: pointer
@@ -79,13 +88,17 @@ button
         left: 0
         width: 150px
         padding-right: 20px
-    span:not(.train-label), input
+    span:not(.train-label), input, select
       @extend %basic-input
       width: 100%
       height: 45px
       +media($phone)
         width: calc(100% - 170px)
         margin-left: 170px
+    select
+      padding: 0 0 0 27px
+    option
+      @extend %basic-input
 
   &:last-of-type
     margin-top: 0

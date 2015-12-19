@@ -20,13 +20,16 @@
         position: absolute
         left: 0
         width: 150px
-
-    input
+    option
+      @extend %basic-input
+    input, select
       @extend %basic-input
       width: 100%
       +media($phone)
         width: calc(100% - 170px)
         margin-left: 170px
+    select
+      padding: 0 0 0 27px
     > div
       +media($phone)
         width: calc(100% - 170px) !important

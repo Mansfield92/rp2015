@@ -87,22 +87,29 @@ p
 .btn-basic
   @extend %btn-basic
 
+#dialog input
+  @extend %basic-input
+
 %basic-input
   display: block
-  padding: 15px 30px
+  padding: 12px 30px
   border: none
   position: relative
   background: $color-dark
   color: rgba(255,255,255,0.7)
   +size(100%,auto)
   +transition(0.3s)
-  +font(15px,15px)
+  +font(15px,21px)
   +border-radius(0)
   box-shadow: 0 0 5px rgba(50, 50, 50, 0.6) inset
+  &:focus
+    box-shadow: 0 0 3px 1px #0ea0eb inset
   &.form-control
     &:focus
-      //box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2) inset, 0 0 4px rgba(255, 255, 255, 0.6)
       box-shadow: 0 0 7px rgba(0, 0, 0, 1)
+  &:disabled
+    cursor: not-allowed
+    background: lighten($color-dark,30%)
 
 //input[type='text'], input[type="file"]
 //  @extend %basic-input

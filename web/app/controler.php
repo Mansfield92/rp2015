@@ -35,7 +35,7 @@ switch ($operation) {
         echo json_encode($return);
         break;
     case 'login_role':
-        $return = array(true, "module" => $module, "operation" => $operation, "role"=>$_SESSION["login_role"]);
+        $return = array(true, "module" => $module, "operation" => $operation, "role"=>$_SESSION["login_role"], "nickname"=> $_SESSION['login_name']);
         echo json_encode($return);
         break;
     case 'update':

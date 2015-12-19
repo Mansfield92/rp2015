@@ -1,6 +1,7 @@
 <?php
 session_start();
 include('../../config/config.db.php');
+include('mapping.php');
 if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
     $view = $_POST['view'];
     if (strpos($view,'detail') !== false) {
@@ -59,13 +60,20 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                 while ($row = $query->fetch_assoc()) {
                     $type = $row['Type'];
                     if ($row['Field'] == 'img_url') {
-                        echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><button id='upload_link' data-name='$row[Field]'>Choose File</button></div>";
-                    } elseif ($type != 'date') {
+                        echo "<div class='add_form__row'><label for='$row[Field]'>".$trainsMap[$row['Field']]."</label><button id='upload_link' data-name='$row[Field]'>Choose File</button></div>";
+                    } elseif($row['Field'] == 'depo'){
+                        $depos = $con->query("SELECT id, nazev FROM depo");
+                        echo "<div class='add_form__row'><label for='$row[Field]'>".$trainsMap[$row['Field']]."</label><select id='depo' name='depo'>";
+                        while($r = $depos->fetch_assoc()){
+                            echo "<option value='$r[id]'>$r[nazev]</option>";
+                        }
+                        echo "</select></div>";
+                    }elseif ($type != 'date') {
                         $size = substr($type, stripos($type, '(') + 1, (stripos($type, ')') - stripos($type, '(')) - 1);
                         $type = substr($type, 0, stripos($type, '('));
-                        echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><input type='text' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";
+                        echo "<div class='add_form__row'><label for='$row[Field]'>".$trainsMap[$row['Field']]."</label><input type='text' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";
                     } else {
-                        echo "<div class='add_form__row'><label for='$row[Field]'>$row[Field]</label><input type='text' class='datepicker' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";
+                        echo "<div class='add_form__row'><label for='$row[Field]'>".$trainsMap[$row['Field']]."</label><input type='text' class='datepicker' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";
                     }
                 }
                 echo "<button data-action='trains-operation-insert' class='btn-basic btn-only-top center-block ajax-action'>Uložit Data</button>";
@@ -93,8 +101,24 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                             }
                             $key = $row['Field'];
                             if($row['Type'] == 'date'){
-                                echo "<div class='train-description_item'><span class='train-label'>$key: </span><span data-name='$row[Field]' class='adminizer datepick'>$data[$key]</span></div>";
-                            }else echo "<div class='train-description_item'><span class='train-label'>$key: </span><span data-name='$row[Field]' class='adminizer'>$data[$key]</span></div>";
+                                echo "<div class='train-description_item'><span class='train-label'>$trainsMap[$key]</span><span data-name='$key' class='adminizer datepick'>$data[$key]</span></div>";
+                            }
+                            elseif($row['Field'] == 'depo'){
+                                $depos = $con->query("SELECT id, nazev FROM depo");
+                                echo "<div class='train-description_item'><span class='train-label'>$trainsMap[$key]: </span><select class='hidden' id='depo' name='depo'>";
+                                $val = $data[$key];
+                                while($r = $depos->fetch_assoc()){
+                                    if($r['id'] == $data[$key]){
+                                        echo "<option value='$r[id]' selected>$r[nazev]</option>";
+                                        $val = $r['nazev'];
+                                    }else{
+                                        echo "<option value='$r[id]'>$r[nazev]</option>";
+                                    }
+                                }
+                                echo "</select><span data-name='$key' class='adminizer adminizer-hide'>$val</span></div>";
+                            }else {
+                                echo "<div class='train-description_item'><span class='train-label'>$trainsMap[$key]: </span><span data-name='$key' class='adminizer'>$data[$key]</span></div>";
+                            }
                         }
                     }
                     echo "</div>";

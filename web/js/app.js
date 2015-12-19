@@ -48,7 +48,7 @@ $App.executeOperation = function (module, $data, $reload) {
                     if (data["response"] !== false) {
                         getData = data;
                         destroy_loader();
-                        utils.showDialog('Položka byla úspěšně vložena','Chyba',true,true);
+                        utils.showDialog('Položka byla úspěšně vložena','Info',true,true);
                     }else{
                         destroy_loader();
                         utils.showDialog('Nepodařilo se uložit záznam','Chyba',true,true);
@@ -64,8 +64,8 @@ $App.executeOperation = function (module, $data, $reload) {
                     $('<div id="dialog">').appendTo('body');$('#dialog').html('').html('<p>Proveden dotaz: ' + data.query + '</p>');$("#dialog").dialog({modal: true,title: 'Info',width: 'auto',draggable: true,buttons: {Ok: function () {utils.showDialog.removeDialog();$App.loadPage(module,$reload)}},close: function (event, ui){utils.showDialog.removeDialog();$App.loadPage(module,$reload);}});
                     break;
                 case 'login_role':
-                    //utils.showDialog('Login role je: ' + data["role"],'Chyba',true,true);
                     $App.login_role = parseInt(data["role"]);
+                    $App.login_name = data["nickname"];
                     break;
             }
         },
@@ -126,9 +126,26 @@ $App.dynamic = function () {
                     Ok: function () {utils.showDialog.removeDialog();$App.executeOperation($action[0], {operation: $action[2], module: $action[0], delete: $del},$reload);},
                     Cancel: function(){utils.showDialog.removeDialog();}},close: function (event, ui){utils.showDialog.removeDialog();}}
                 );
+            }else if($action[0] == 'login' && $action[2] == 'profile'){
+                $('<div id="dialog">').appendTo('body');
+                $('#dialog').html('').html(
+                    '<form id="profile-form"><label for="login">Přihlašovací jméno: </label><input type="text" name="login" value="'+$App.login_name+'" placeholder="Přihlašovací jméno" >' +
+                    '<label for="password">Heslo: </label><input type="password" name="password" value="" placeholder="Heslo" >' +
+                    '<label for="password_check">Heslo znovu: </label><input type="password" name="password_check" value="" placeholder="Heslo znovu" ></form>'
+                );
+                $("#dialog").dialog({modal: true,title: 'Úprava profilu',width: 'auto',draggable: true,
+                    buttons: {
+                        Ok: function () {
+                            var $data = $('#profile-form').serialize();
+                            utils.showDialog.removeDialog();
+                            utils.showDialog($data,'Form',true,true);
+                    },close: function (event, ui){
+                        utils.showDialog.removeDialog();
+                        }
+                }});
             }else {
                 var $data = "";
-                $('.add_form__row > input, .train-description_item > input').each(function () {
+                $('.add_form__row > input, .train-description_item > input,.train-description_item > select, .add_form__row select').each(function () {
                     $data += $(this).attr('name') + "[^]" + $(this).val() + "$^$";
                 });
                 //log($action[0] + " = " + $action[1] + " = " + $action[2]);
@@ -167,15 +184,20 @@ $App.dynamic = function () {
 
 $App.adminizer = function(){
     $('.adminizer').each(function () {
-        var $this = $(this);
-        var $html = $this.html();
-        var $datepic = $this.hasClass('datepick');
-        var $name = $this.data('name');
-        if($datepic) {
-            $this.replaceWith('<input class="datepic" name="'+$name+'" type="text" value="' + $html + '" />');
-            $('.datepic').datepicker({ dateFormat: 'yy-mm-dd' });
-        }else{
-            $this.replaceWith('<input type="text" name="'+$name+'" value="' + $html + '" />');
+        if($(this).hasClass('adminizer-hide')){
+            $(this).parent().find('select').removeClass('hidden');
+            $(this).remove();
+        }else {
+            var $this = $(this);
+            var $html = $this.html();
+            var $datepic = $this.hasClass('datepick');
+            var $name = $this.data('name');
+            if ($datepic) {
+                $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
+                $('.datepic').datepicker({dateFormat: 'yy-mm-dd'});
+            } else {
+                $this.replaceWith('<input type="text" name="' + $name + '" value="' + $html + '" />');
+            }
         }
     });
 };

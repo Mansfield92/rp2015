@@ -16,7 +16,7 @@ if ($login->is_logged == 1) {
 <?php
 if ($login->is_logged == 1) {
     echo '<meta http-equiv="refresh" content="0;url=../web">';
-    echo '<link href="css/login.min.css" rel="stylesheet"><link href="css/vader/jquery-ui-1.9.2.custom.min.css" rel="stylesheet"><script src="js/jquery.min.js"></script>';
+    echo '<link href="css/login.min.css" rel="stylesheet"><link href="css/jquery-ui.css" rel="stylesheet"><script src="js/jquery.min.js"></script>';
     echo '<script>$(function() {
             $.fn.center = function () {
                 this.css("position","absolute");
