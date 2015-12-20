@@ -19,7 +19,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                     <input type="text" id="search" class="form-control" placeholder="Vyhledávání podle jména a příjmení">
                 </div>
                 <div class="users-list">
-                    <?php $query = "SELECT img_url,id, jmeno, prijmeni, smlouva_od, role, email from zamestnanec";
+                    <?php $query = "SELECT img_url,id, jmeno, prijmeni, smlouva_od, role, email from zamestnanec where login != 'admin'";
                     $query = $con->query($query);
                     while ($row = $query->fetch_assoc()) { ?>
                         <div class="users-list_item" data-search="<?php echo $row['jmeno'].' '.$row['prijmeni']; ?>">
@@ -63,13 +63,18 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                         echo "</select></div>";
                     }
                     elseif($row['Field'] == 'role'){
-                        $depos = $con->query("SELECT id, nazev FROM role");
+                        $depos = $con->query("SELECT id, nazev FROM role where id != '69'");
                         echo "<div class='add_form__row'><label for='$row[Field]'>".$usersMap[$row['Field']]."</label><select id='role' name='role'>";
                         while($r = $depos->fetch_assoc()){
                             echo "<option value='$r[id]'>$r[nazev]</option>";
                         }
                         echo "</select></div>";
                     }
+                    elseif($row['Field'] == 'password'){
+
+                        $size = substr($type, stripos($type, '(') + 1, (stripos($type, ')') - stripos($type, '(')) - 1);
+                        $type = substr($type, 0, stripos($type, '('));
+                        echo "<div class='add_form__row'><label for='$row[Field]'>".$usersMap[$row['Field']]."</label><input type='password' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";                    }
                     elseif ($type != 'date') {
                         if($row['Field'] == 'id'){
                             $id = 'NULL';
@@ -123,7 +128,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                                 echo "</select><span data-name='$key' class='adminizer adminizer-hide'>$val</span></div>";
                             }
                             elseif($row['Field'] == 'role'){
-                                $roles = $con->query("SELECT id, nazev FROM role");
+                                $roles = $con->query("SELECT id, nazev FROM role where id != '69'");
                                 echo "<div class='train-description_item'><span class='train-label'>$usersMap[$key]: </span><select class='hidden' id='role' name='role'>";
                                 $val = $data[$key];
                                 while($r = $roles->fetch_assoc()){

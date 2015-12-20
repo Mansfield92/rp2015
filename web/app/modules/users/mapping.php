@@ -16,6 +16,6 @@ $usersMap = array(
     "role" => "Role",
     "smlouva_od" => "",
     "login" => "",
-    "password" => "",
+    "password" => "Heslo: ",
     "smlouva_do" => "",
 );

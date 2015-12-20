@@ -1,10 +1,11 @@
 <?php
+include("app/config/config.db.php");
 include("app/modules/login/class.login.php");
 session_start();
 if (isset($login)) {
     $login->is_logged = $login->logged();
 } else {
-    $login = new login;
+    $login = new login($con);
 }
 if ($login->is_logged == 1) {
 }
@@ -30,11 +31,9 @@ if ($login->is_logged == 1) {
 } else {
     ?>
     <link href="css/login.min.css" rel="stylesheet">
-    <link href="css/vader/jquery-ui-1.9.2.custom.min.css" rel="stylesheet">
     <link type="image/png" rel="icon" href="img/favicon.png">
     <script src="js/jquery.min.js"></script>
     <script type='text/javascript' src='js/jquery.tipsy.js'></script>
-    <script src="js/jquery-ui-1.9.2.custom.min.js"></script>
     <title>Login</title>
     <script>
 
@@ -69,9 +68,9 @@ if ($login->is_logged == 1) {
             $('input').tipsy({fade: true, gravity: 'w'});
             $('.login').centerTop();
             $('input[name="login_name"]').focus();
-            $("input[type=checkbox]").button();
+//            $("input[type=checkbox]").button();
             $("label[for='animation']").attr('class', 'enviar');
-            $("#animation").button();
+//            $("#animation").button();
 
         };
         $(window).resize(function () {
@@ -102,7 +101,7 @@ if ($login->is_logged == 1) {
                             .show()
                             .addClass('active')
                             .animate({"top": "+=100px"}, "slow")
-                            .effect("bounce", {times: 4}, 500).fadeOut(5000);
+                            .fadeOut(5000);
                     }
                 }
             });

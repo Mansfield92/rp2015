@@ -29,7 +29,8 @@ USE `rocnikovy_projekt`;
 --
 
 CREATE TABLE IF NOT EXISTS `depo` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `img_url` varchar(100) COLLATE utf8_czech_ci NOT NULL,
   `nazev` varchar(100) COLLATE utf8_czech_ci DEFAULT NULL,
   `GPS` varchar(100) COLLATE utf8_czech_ci DEFAULT NULL,
   `mesto` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
@@ -57,7 +58,7 @@ INSERT INTO `depo` (`id`, `nazev`, `GPS`, `mesto`, `adresa`, `cislo_popisne`, `s
 --
 
 CREATE TABLE IF NOT EXISTS `kontrola` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `provedl` int(11) DEFAULT NULL,
   `vlak` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
   `datum_expirace` date DEFAULT NULL,
@@ -99,7 +100,7 @@ INSERT INTO `role` (`id`, `nazev`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `sklad` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `kapacita` int(11) DEFAULT NULL,
   `depo` int(11) NOT NULL,
   PRIMARY KEY (`id`),
@@ -114,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `sklad` (
 --
 
 CREATE TABLE IF NOT EXISTS `stanice` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `GPS` varchar(100) COLLATE utf8_czech_ci DEFAULT NULL,
   `nazev` varchar(100) COLLATE utf8_czech_ci DEFAULT NULL,
   `mesto` varchar(100) COLLATE utf8_czech_ci DEFAULT NULL,
@@ -145,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `stanicetrasy` (
 --
 
 CREATE TABLE IF NOT EXISTS `trasa` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `nazev_trasy` varchar(100) COLLATE utf8_czech_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UQ_Trasa_id` (`id`)
@@ -158,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `trasa` (
 --
 
 CREATE TABLE IF NOT EXISTS `trat` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `ohodnoceni` float(5,2) DEFAULT NULL,
   `vychozi_stanice` int(11) NOT NULL,
   `cilova_stanice` int(11) NOT NULL,
@@ -235,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `vlakjede` (
 --
 
 CREATE TABLE IF NOT EXISTS `zamestnanec` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `img_url` varchar(100) COLLATE utf8_czech_ci NOT NULL,
   `druh_pomeru` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
   `email` varchar(100) COLLATE utf8_czech_ci DEFAULT NULL,

@@ -1,4 +1,11 @@
-.users-list, .depos-list
+.users-list, .depos-list, .route-list, .station-list
+  h2
+    display: block
+    padding: 10px
+    background: $color-dark
+    color: $color-white
+    text-align: center
+    margin: 0
   &_item
     background: $transparent-back
     margin-top: 5px
@@ -59,3 +66,17 @@
     &_text
       padding: 0 20px
       line-height: 120px
+
+.route-list
+  &_item
+    &:last-of-type
+      margin-bottom: 5px
+    &_column
+      +media($small-desktop)
+        width: 22.5%
+
+
+.station-list
+  &_item
+    &:last-of-type
+      margin-bottom: 5px

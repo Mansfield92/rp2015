@@ -20,6 +20,16 @@
             <div class="grid-item_text">
                 Servis
             </div>
+        </div><div class="grid-item " data-action="route-list">
+            <img src="icons/route.svg" />
+            <div class="grid-item_text">
+                Trasy
+            </div>
+        </div><div class="grid-item " data-action="plans-list">
+            <img src="icons/plan.svg" />
+            <div class="grid-item_text">
+                Plánování
+            </div>
         </div><div class="grid-item " data-action="reports-list">
             <img src="icons/graph_small.svg"/>
             <div class="grid-item_text">

@@ -1,17 +1,20 @@
 <?php
-class login {
-	var $login_name,$login_pw,$is_logged,$checktimelimit,$session_string,$bug,$role;
-    private $users = array(array('name'=>'Neo','pw'=>'lamer','role'=>1),array('name'=>'admin','pw'=>'lamer','role'=>3));
-	private $roles = array('Neo'=>1,'admin'=>3);
 
-	function login(){
+include "/app/config/config.db.php";
+
+class login {
+	var $login_name,$login_pw,$is_logged,$checktimelimit,$session_string,$bug,$role,$con;
+//    private $users = array(array('name'=>'Neo','pw'=>'lamer','role'=>1),array('name'=>'admin','pw'=>'lamer','role'=>69));
+
+	function login($db){
+		$this->con = $db;
 		$this->checktimelimit=(15*60);
 		$this->is_logged = $this->logged();
 		$this->is_logged = $this->is_logged == 0 ? $this->first_login() : $this->is_logged;
 	}
 
 	private function first_login(){
-		if (isset($_POST['login_name']) && strlen($_POST['login_name'])>1){
+		if (isset($_POST['login_name']) && strlen($_POST['login_name'])>1 && isset($_POST['login_pw']) && strlen($_POST['login_pw'])>1){
             $isFine = $this->testMatch($_POST['login_name'],$_POST['login_pw']);
             if($isFine){
 				$this->load();
@@ -22,12 +25,20 @@ class login {
 	}
 
     private function testMatch($n,$p){
-        for($i = 0; $i < count($this->users); $i++){
-            if($this->users[$i]['name'] == $n && $p == $this->users[$i]['pw']){
-                return true;
-            }
-        }
-        return false;
+
+		$q = $this->con->query("SELECT role,login,password FROM zamestnanec WHERE login='$n' AND  password='$p'");
+		if($q->num_rows > 0){
+			$row = $q -> fetch_assoc();
+			$this->role = $row['role'];
+			return true;
+		}
+		return false;
+
+//        for($i = 0; $i < count($this->users); $i++){
+//            if($this->users[$i]['name'] == $n && $p == $this->users[$i]['pw']){
+//                return true;
+//            }
+//        }
     }
 
 	private function load(){
@@ -36,7 +47,7 @@ class login {
 		$this->session_string = md5($this->login_name.$this->login_pw);
 		$_SESSION['login_name'] = $_POST['login_name'];
 		$_SESSION['login_pw'] = $_POST['login_pw'];
-		$_SESSION['login_role'] = $this->roles[$_POST['login_name']];
+		$_SESSION['login_role'] = $this->role;
 		$_SESSION['session_string'] = md5($this->login_name.$this->login_pw);
 	}
 

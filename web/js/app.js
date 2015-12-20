@@ -48,7 +48,8 @@ $App.executeOperation = function (module, $data, $reload) {
                     if (data["response"] !== false) {
                         getData = data;
                         destroy_loader();
-                        utils.showDialog('Položka byla úspěšně vložena','Info',true,true);
+                        $App.loadPage(module,'detail_'+data['id']);
+                        //utils.showDialog('Položka byla úspěšně vložena' + "<br/>" + data['id'],'Info',true,true);
                     }else{
                         destroy_loader();
                         utils.showDialog('Nepodařilo se uložit záznam','Chyba',true,true);
@@ -61,11 +62,23 @@ $App.executeOperation = function (module, $data, $reload) {
                     break;
                 case 'delete':
                     destroy_loader();
-                    $('<div id="dialog">').appendTo('body');$('#dialog').html('').html('<p>Proveden dotaz: ' + data.query + '</p>');$("#dialog").dialog({modal: true,title: 'Info',width: 'auto',draggable: true,buttons: {Ok: function () {utils.showDialog.removeDialog();$App.loadPage(module,$reload)}},close: function (event, ui){utils.showDialog.removeDialog();$App.loadPage(module,$reload);}});
+                    if($reload.indexOf('#') != -1){
+                        var $view = $reload.split('-');
+                        var $module = $view[0].substr(1);
+                        $view = $view[1];
+                        $App.loadPage($module,$view);
+                    }else{
+                        $App.loadPage(module,$reload);
+                    }
+                    //$('<div id="dialog">').appendTo('body');$('#dialog').html('').html('<p>Proveden dotaz: ' + data.query + '</p>');$("#dialog").dialog({modal: true,title: 'Info',width: 'auto',draggable: true,buttons: {Ok: function () {utils.showDialog.removeDialog();$App.loadPage(module,$reload)}},close: function (event, ui){utils.showDialog.removeDialog();$App.loadPage(module,$reload);}});
                     break;
                 case 'login_role':
                     $App.login_role = parseInt(data["role"]);
                     $App.login_name = data["nickname"];
+                    break;
+                case 'change-profile':
+                    destroy_loader();
+                    utils.showDialog('Zmena profilu cajk','Info',true,true);
                     break;
             }
         },
@@ -128,18 +141,34 @@ $App.dynamic = function () {
                 );
             }else if($action[0] == 'login' && $action[2] == 'profile'){
                 $('<div id="dialog">').appendTo('body');
-                $('#dialog').html('').html(
-                    '<form id="profile-form"><label for="login">Přihlašovací jméno: </label><input type="text" name="login" value="'+$App.login_name+'" placeholder="Přihlašovací jméno" >' +
-                    '<label for="password">Heslo: </label><input type="password" name="password" value="" placeholder="Heslo" >' +
+                var html ='<form id="profile-form">';
+
+                if($App.login_role != 69){
+                    html += '<label for="login">Přihlašovací jméno: </label><input type="text" name="login" value="'+$App.login_name+'" placeholder="Přihlašovací jméno" >';
+                }
+                html += '<label for="password">Heslo: </label><input type="password" name="password" value="" placeholder="Heslo" >' +
                     '<label for="password_check">Heslo znovu: </label><input type="password" name="password_check" value="" placeholder="Heslo znovu" ></form>'
-                );
+                $('#dialog').html('').html(html);
                 $("#dialog").dialog({modal: true,title: 'Úprava profilu',width: 'auto',draggable: true,
                     buttons: {
-                        Ok: function () {
-                            var $data = $('#profile-form').serialize();
-                            utils.showDialog.removeDialog();
-                            utils.showDialog($data,'Form',true,true);
-                    },close: function (event, ui){
+                        Upravit: function () {
+                            var $form = $('#profile-form');
+                            var $nick = $form.find('input[name="login"]').val() || "";
+                            var $pass = $form.find('input[name="password"]').val();
+                            var $check = $form.find('input[name="password_check"]').val();
+
+                            if($nick.length > 0 && $nick != $App.login_name && $pass.length == 0){
+                                $App.executeOperation('login',{operation: 'change-profile',module: 'login',nick:$nick});
+                            }else if($pass == $check){
+                                if($pass.length >= 5){
+                                    if($nick.length > 0 && $nick != $App.login_name){
+                                        $App.executeOperation('login',{operation: 'change-profile',module: 'login',nick:$nick, password: $pass});
+                                    }else{
+                                        $App.executeOperation('login',{operation: 'change-profile',module: 'login',password: $pass});
+                                    }
+                                }
+                            }
+                    },Zavřít: function (event, ui){
                         utils.showDialog.removeDialog();
                         }
                 }});
@@ -196,7 +225,8 @@ $App.adminizer = function(){
                 $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
                 $('.datepic').datepicker({dateFormat: 'yy-mm-dd'});
             } else {
-                $this.replaceWith('<input type="text" name="' + $name + '" value="' + $html + '" />');
+                if($name == 'password')$this.replaceWith('<input type="password" name="' + $name + '" value="' + $html + '" />');
+                else $this.replaceWith('<input type="text" name="' + $name + '" value="' + $html + '" />');
             }
         }
     });

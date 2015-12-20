@@ -2,7 +2,7 @@
 session_start();
 include('../../config/config.db.php');
 include('mapping.php');
-if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
+if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
     $view = $_POST['view'];
     if (strpos($view,'detail') !== false) {
         $id = substr($view, 7);
@@ -10,30 +10,61 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
     }
     ?>
     <?php switch ($view): ?><?php case 'list': ?>
-        <section class="depos">
+        <section class="route">
             <div class="container">
-                <button class="btn-actions btn-add ajax-action" data-action="depo-add_form"> Přidat depo</button>
-                <div class="depos-list">
+                <button class="btn-actions btn-add ajax-action" data-action="route-add_form"> Přidat trasu</button><button
+                    class="btn-actions btn-add ajax-action" data-action="station-add_form"> Přidat stanici</button>
+                <div class="station-list">
+                    <h2>Stanice</h2>
                     <?php
-                    $query = "SELECT img_url,id, nazev, mesto, kapacita from depo";
+                    $query = "SELECT id,nazev, mesto, stat from stanice";
                     $query = $con->query($query);
                     while ($row = $query->fetch_assoc()) { ?>
-                        <div class="depos-list_item">
-                            <div class="depos-list_item_column">
-                                <img src="upload_pic/<?php echo $row['img_url']; ?>" alt=""/>
-                            </div><div class="depos-list_item_column">
-                                <div class="depos-list_item_text">
+                        <div class="station-list_item">
+                            <div class="station-list_item_column">
+                                <div class="station-list_item_text">
                                     <?php echo $row['nazev']; ?>
                                 </div>
-                            </div><div class="depos-list_item_column">
-                                <div class="depos-list_item_text">
+                            </div><div class="station-list_item_column">
+                                <div class="station-list_item_text">
                                     <?php echo $row['mesto']; ?>
                                 </div>
-                            </div><div class="depos-list_item_column">
-                                <div class="depos-list_item_text">
-                                    <?php echo $row['kapacita']; ?>
+                            </div><div class="station-list_item_column">
+                                <div class="station-list_item_text">
+                                    <?php echo $row['stat']; ?>
                                 </div>
-                            </div><div class="depos-list_item_column ajax-action" data-action="depo-detail_<?php echo $row['id']; ?>">
+                            </div><div class="station-list_item_column ajax-action" data-action="station-detail_<?php echo $row['id']; ?>">
+                                <img src="icons/search.svg" alt="icon"/>
+                            </div>
+                        </div>
+                        <?php
+                    } ?>
+                </div>
+
+                <div class="route-list">
+                    <h2>Trasy</h2>
+                    <?php
+                    $query = "SELECT id,nazev_trasy, delka, vyluka, disabled from trasa";
+                    $query = $con->query($query);
+                    while ($row = $query->fetch_assoc()) { ?>
+                        <div class="route-list_item">
+                            <div class="route-list_item_column">
+                                <div class="route-list_item_text">
+                                    <?php echo $row['nazev_trasy']; ?>
+                                </div>
+                            </div><div class="route-list_item_column">
+                                <div class="route-list_item_text">
+                                    <?php echo $row['delka']; ?> km
+                                </div>
+                            </div><div class="route-list_item_column">
+                                <div class="route-list_item_text">
+                                    <?php echo $row['vyluka']; ?>
+                                </div>
+                            </div><div class="route-list_item_column">
+                                <div class="route-list_item_text">
+                                    <?php echo $row['disabled']; ?>
+                                </div>
+                            </div><div class="route-list_item_column ajax-action" data-action="route-detail_<?php echo $row['id']; ?>">
                                 <img src="icons/search.svg" alt="icon"/>
                             </div>
                         </div>
