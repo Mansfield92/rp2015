@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $data = isset($_POST['data']) ? $_POST['data'] : false;
 $operation = $_POST['operation'];
 $module = $_POST['module'];
-$mapping = array('trains'=>'vlak', 'users'=>'zamestnanec', 'depo'=>'depo', 'station'=>'stanice');
+$mapping = array('trains'=>'vlak', 'users'=>'zamestnanec', 'depo'=>'depo', 'station'=>'stanice','route'=>'trasa');
 
 include("config/config.db.php");
 
@@ -72,6 +72,13 @@ switch ($operation) {
             $values .= $elem[0]." = '" . $elem[1] . "',";
         }
         $query = $query.substr($values, 0, count($values) - 2)." WHERE $id";
+        $return = array("response" => $con->query($query), "module" => $module, "operation" => $operation, "query"=>$query);
+        echo json_encode($return);
+        break;
+    case 'enable':
+        $id = $_POST['id'];
+        $enable = $_POST['enable'];
+        $query = "UPDATE `rocnikovy_projekt`.`trasa` SET `disabled` = ".($enable == 'true' ? '0' : '1')." WHERE `trasa`.`id` = $id";
         $return = array("response" => $con->query($query), "module" => $module, "operation" => $operation, "query"=>$query);
         echo json_encode($return);
         break;

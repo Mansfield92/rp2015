@@ -90,6 +90,7 @@ $App.executeOperation = function (module, $data, $reload) {
 };
 
 $App.dynamic = function () {
+    $App.routes();
     $App.executeOperation('login',{operation: 'login_role',module: 'login'});
 
     $('.datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
@@ -182,7 +183,7 @@ $App.dynamic = function () {
                     var $filename = timestamp();
                     var $ext = $('input[name="image"]').val();
                     if($ext.length < 3 && $action[2] == 'insert'){
-                        utils.showDialog('error','error kurva pica',true,true);
+                        utils.showDialog('Prosim vyberte obrazek','Chyba',true,true);
                         return false;
                     }else if($ext.length > 3) {
                         $ext = $ext.substr($ext.lastIndexOf('.'));
@@ -195,13 +196,32 @@ $App.dynamic = function () {
                         $('input[name="image"]').val('');
                     }
                 }
+
+                var $validate = $(this).data('validate');
                 var $params;
-                if($action[2] == 'update') {
-                    var data_id = $(this).data('id');
-                    $params = {id: data_id, operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
-                }else $params = {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
-                var $response = $App.executeOperation($action[0], $params);
-                log($response);
+
+                if(typeof $validate != 'undefined'){
+                    $validate = $validate.split(',');
+                    if(validate($validate[0],$validate[1])){
+                        if($action[2] == 'update') {
+                            var data_id = $(this).data('id');
+                            $params = {id: data_id, operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
+                        }else $params = {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
+                        var $response = $App.executeOperation($action[0], $params);
+                        log($response);
+                    }else{
+                        utils.showDialog($validate[2],'Chyba',true,true);
+                        return false;
+                    }
+                }else{
+                    if($action[2] == 'update') {
+                        data_id = $(this).data('id');
+                        $params = {id: data_id, operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
+                    }else $params = {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
+                    $response = $App.executeOperation($action[0], $params);
+                    log($response);
+                }
+
             }
         }
     });
@@ -209,6 +229,48 @@ $App.dynamic = function () {
         $App.adminizer();
     }
     setTimeout(function(){destroy_loader()},200);
+};
+
+function validate(type,data){
+    switch (type){
+        case 'notSame':
+            data = data.split('+');
+            var item1 = $('#'+data[0]).val();
+            var item2 = $('#'+data[1]).val();
+            //log($('select#'+data[0]));
+            //var item2 = $('#'+data[1]).val();
+            //log(item1 + "=" + item2);
+            return item1.length > 0 && item2.length > 0 && item1 != item2;
+            break;
+    }
+    return false;
+}
+
+$App.routes = function(){
+    $('.route-switch').click(function(e){
+        e.preventDefault();
+        var $id = $(this).data('action');
+        var $state = $(this).html() == 'Povolit';
+        var $this = $(this);
+
+
+        var getData = $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            url: "app/controler.php",
+            data: {module:'route',operation:'enable',id:$id, enable: $state},
+            success: function (data) {
+                $this.html($state ? 'Zakázat' : 'Povolit');
+                var $parent = (($this.parent()).parent()).parent();
+                if($state){
+                    $parent.removeClass('disabled');
+                }else{
+                    $parent.addClass('disabled');
+                }
+                //utils.showDialog('Response ' + data['response'],'Info',true,true);
+            }
+        });
+    });
 };
 
 $App.adminizer = function(){

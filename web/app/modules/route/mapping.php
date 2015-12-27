@@ -1,14 +1,11 @@
 <?php
 
-$depoMap = array(
-    "img_url" => "Fotografie",
+$routeMap = array(
     "id" => "ID",
-    "nazev" => "Název depa",
-    "GPS" => "Souřadnice",
-    "mesto" => "Město",
-    "adresa" => "Adresa",
-    "cislo_popisne" => "Č. p.",
-    "stat" => "Stát",
-    "telefon" => "Telefon",
-    "kapacita" => "Kapacita lokomotiv"
-);
+    "nazev_trasy" => "Název trasy",
+    "stanice1" => "Ze stanice",
+    "stanice2" => "Do stanice",
+    "delka" => "Délka trasy",
+    "vyluka" => "Výluka",
+    "disabled" => "Povolena",
+    );
