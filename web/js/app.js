@@ -26,7 +26,7 @@ $App.getAjaxData = function (target, data) {
 $App.loadPage = function (module, view) {
     show_loader();
     var response = $App.getAjaxData(module, {view: view});
-    response = response.indexOf('section') == -1 ? '<section><div class="container">Spatna stranka, pico! :D (Modul neexistuje)</div></section>' : response;
+    response = response.indexOf('section') == -1 ? '<section><div class="container">Modul neexistuje</div></section>' : response;
     window.history.pushState({"html": response, "pageTitle": module + view}, "", "#" + module + "-" + view);
     $App.body.replaceWith(response);
     $App.body = $('body').find('> section');
@@ -106,10 +106,28 @@ $App.dynamic = function () {
             $('#upload_link').html($('input[name="image"]').val());
         }
     });
-    $('#search').keyup(function(){
+
+    $('.change_state').change(function(){
+        var $id = $(this).data('id');
+        var $newState = $(this).val();
+        log($id + ' - ' + $newState);
+
+        var getData = $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            url: "app/controler.php",
+            data: {module:'plans',operation:'change_state',id:$id, state: $newState},
+            success: function (data) {
+                if($newState == 6)$App.loadPage('plans', 'list');
+            }
+        });
+    });
+
+    $('#search, .search-input').keyup(function(){
         var valThis = $(this).val().toString();
         valThis = valThis.toLowerCase();
-        $('.train-list_item, .users-list_item').each(function(){
+        var $list = $(this).data('search');
+        $('.'+$list+'_item').each(function(){
             var text = $(this).data('search').toString();
             text = text.toLowerCase();
             if(text.indexOf(valThis) != -1){
@@ -136,9 +154,9 @@ $App.dynamic = function () {
                 var $reload = $(this).data('reload');
                 $('<div id="dialog">').appendTo('body');
                 $('#dialog').html('').html('<p>Opravdu chcete vymazat tuto položku?</p>');
-                $("#dialog").dialog({modal: true,title: 'Mazání',width: 'auto',draggable: true,buttons: {
-                    Ok: function () {utils.showDialog.removeDialog();$App.executeOperation($action[0], {operation: $action[2], module: $action[0], delete: $del},$reload);},
-                    Cancel: function(){utils.showDialog.removeDialog();}},close: function (event, ui){utils.showDialog.removeDialog();}}
+                $("#dialog").dialog({modal: true,title: 'Mazání',width: 'auto',draggable: true, resizable: false,buttons: {
+                    Ano: function () {utils.showDialog.removeDialog();$App.executeOperation($action[0], {operation: $action[2], module: $action[0], delete: $del},$reload);},
+                    Ne: function(){utils.showDialog.removeDialog();}},close: function (event, ui){utils.showDialog.removeDialog();}}
                 );
             }else if($action[0] == 'login' && $action[2] == 'profile'){
                 $('<div id="dialog">').appendTo('body');
@@ -199,20 +217,21 @@ $App.dynamic = function () {
 
                 var $validate = $(this).data('validate');
                 var $params;
-
                 if(typeof $validate != 'undefined'){
-                    $validate = $validate.split(',');
-                    if(validate($validate[0],$validate[1])){
-                        if($action[2] == 'update') {
-                            var data_id = $(this).data('id');
-                            $params = {id: data_id, operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
-                        }else $params = {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
-                        var $response = $App.executeOperation($action[0], $params);
-                        log($response);
-                    }else{
-                        utils.showDialog($validate[2],'Chyba',true,true);
-                        return false;
+                    var $items = $validate.split('|');
+                    for(var $i = 0; $i < $items.length; $i++){
+                        $validate = $items[$i].split(',');
+                        if(!validate($validate[0],$validate[1])){
+                            utils.showDialog($validate[2],'Chyba',true,true);
+                            return false;
+                        }
                     }
+                    if($action[2] == 'update') {
+                        var data_id = $(this).data('id');
+                        $params = {id: data_id, operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
+                    }else $params = {operation: $action[2], module: $action[0], data: $data.substr(0, $data.length - 3)};
+                    var $response = $App.executeOperation($action[0], $params);
+                    log($response);
                 }else{
                     if($action[2] == 'update') {
                         data_id = $(this).data('id');
@@ -242,17 +261,51 @@ function validate(type,data){
             //log(item1 + "=" + item2);
             return item1.length > 0 && item2.length > 0 && item1 != item2;
             break;
+        case 'notEmpty':
+            var $val = $('#'+data).val();
+            return $val != '--';
+            break;
+        case 'isNum':
+            $val = $('input[name="'+data+'"]').val();
+            log($val);
+            return (!isNaN(parseInt($val)) && isFinite($val));
+            break;
     }
     return false;
 }
 
 $App.routes = function(){
-    $('.route-switch').click(function(e){
-        e.preventDefault();
-        var $id = $(this).data('action');
-        var $state = $(this).html() == 'Povolit';
-        var $this = $(this);
+    var $width = parseInt($('.route-list_item_column').width());
+    $('.route-switch').switchButton({
+        width: $width+2,
+        height: 40,
+        button_width: ($width/2)+1,
+        //show_labels: false
+        on_label: 'Zapnuta',
+        off_label: 'Vypnuta'
+    });
 
+    $('.switch-button-button').each(function () {
+        var $state = $(this).parent().is('.checked');
+        log($state);
+        $(this).html(!$state ? 'Zapnout' : 'Vypnout');
+    });
+
+    $('.switch-button-background').css('height','100%');
+
+    $('.switch-button-background, .switch-button-button, .switch-button-label').click(function() {
+    //$('.to_switch').click(function() {
+    //    alert('bagr');
+        var $check = $(this).parent().parent().find('input');
+        //var $check = $(this).find('input');
+        var $id = $check.data('action');
+        //var $state = !($(this).parent().parent().find('.switch-button-label:first').is('.on'));
+        var $state = $check.is(':checked');
+        var $this = $check;
+
+
+        setTimeout(function(){
+        log($state);
 
         var getData = $.ajax({
             dataType: 'json',
@@ -260,16 +313,19 @@ $App.routes = function(){
             url: "app/controler.php",
             data: {module:'route',operation:'enable',id:$id, enable: $state},
             success: function (data) {
-                $this.html($state ? 'Zakázat' : 'Povolit');
-                var $parent = (($this.parent()).parent()).parent();
+                //var $parent = (($this.parent()  ).parent()).parent();
+                var $parent = $this.parent().parent().parent();
+                //alert($parent.attr('class'));
                 if($state){
                     $parent.removeClass('disabled');
                 }else{
                     $parent.addClass('disabled');
                 }
+
+                $parent.find('.switch-button-button').html(!$state ? 'Zapnout' : 'Vypnout');
                 //utils.showDialog('Response ' + data['response'],'Info',true,true);
             }
-        });
+        });});
     });
 };
 
@@ -296,6 +352,20 @@ $App.adminizer = function(){
 
 
 $App.init = function () {
+
+    $('html').unbind('click').bind('click',function() {
+        //log($('.navbar-toggle').hasClass('collapsed'));
+        if(!$('.navbar-toggle').hasClass('collapsed')) {
+            //log('bagr');
+            //$(this).click();
+            $('#bs-example-navbar-collapse-8').removeClass('in');
+            $(this).removeClass('collapsed');
+            //if($('#bs-example-navbar-collapse-8').hasClass('in')){
+            //    log('outside click');
+            //}
+        }
+    });
+
     $App.body = $('body').find('> section');
     var $path = window.location.href.toString();
     $path = $path.substr($path.lastIndexOf('/') + 1);

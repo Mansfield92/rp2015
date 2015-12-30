@@ -1,0 +1,35 @@
+.switch-button-label
+  float: left
+  font-size: 10pt
+  cursor: pointer
+  position: absolute
+  font-weight: bold
+  color: $color-dark
+  z-index: 2
+  top: 0
+  width: 50%
+  line-height: 45px
+  text-align: center
+  +transition(0.5s)
+  &:first-of-type
+    right: 0
+    color: $color-white
+  &:last-of-type
+    left: 0
+
+.switch-button-background
+  position: relative
+  cursor: pointer
+  z-index: 3
+
+.switch-button-button 
+  position: absolute
+  height: 100% !important
+  color: $color-white
+  font-weight: bold
+  background: $color-dark
+  +transition(0.5s)
+  &:hover
+    background: $color-white
+    color: $color-dark
+

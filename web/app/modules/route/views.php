@@ -41,7 +41,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                     } ?>
                 </div>
 
-                <div class="route-list">
+                <div class="route-list  margin-top50">
                     <h2>Trasy</h2>
                     <?php
                     $query = "SELECT id,nazev_trasy, delka, vyluka, disabled from trasa";
@@ -62,16 +62,15 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                                     <?php echo $row['delka']; ?> km
                                 </div>
                             </div><div class="route-list_item_column">
-                                <div class="route-list_item_text
-                                <?php
-                                ?>">
+                                <div class="route-list_item_text">
                                     <?php
                                         echo $vyluka[0];
                                     ?>
                                 </div>
                             </div><div class="route-list_item_column">
-                                <div class="route-list_item_text">
-                                    <a href="#" data-action="<?php echo $row['id']; ?>" class='route-switch'><?php echo $disabled ? "Povolit" : "Zakázat" ?></a>
+                                <div class="route-list_item_text to_switch">
+                                    <input class="route-switch" type="checkbox" value="true" data-action="<?php echo $row['id']; ?>" <?php echo $disabled ? "" : "checked" ?> />
+<!--                                    <a href="#" data-action="--><?php //echo $row['id']; ?><!--" class='route-switch'></a>-->
                                 </div>
                             </div><div class="route-list_item_column ajax-action" data-action="route-detail_<?php echo $row['id']; ?>">
                                 <img src="icons/search.svg" alt="icon"/>
@@ -111,6 +110,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                         }
                         echo "</select></div>";
                     } elseif ($row['Field'] == 'disabled') {
+//                        echo "<select name='$row[Field]'><option value='0' >Ano</option><option value='1' >Ne</option></select>";
                     }elseif ($type != 'date') {
                         if($row['Field'] == 'id'){
                             $id = 'NULL';
@@ -177,7 +177,6 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                             echo "<option value='0' ".($data[$key] == '1' ? '' : 'selected').">Ano</option>";
                             echo "<option value='1' ".($data[$key] == '0' ? '' : 'selected').">Ne</option>";
                             echo "</select><span data-name='$key' class='adminizer adminizer-hide'>".($data[$key] == '0' ? 'Ne' : 'Ano')."</span></div>";
-
                         }
                         else {
                             echo "<div class='train-description_item'><span class='train-label'>$routeMap[$key]: </span><span data-name='$key' class='adminizer'>$data[$key]</span></div>";

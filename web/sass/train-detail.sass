@@ -21,15 +21,16 @@ section
         &:before
           +scaleX(1)
 
-.user-detail
+.user-detail, .train-detail
   width: auto
   min-width: auto
+  max-width: 100%
   margin: 0 auto
 
 #upload_link
   margin: 0 auto
 
-button
+button:not(.navbar-toggle)
   cursor: pointer
   @extend %btn-basic
   text-align: left
@@ -40,7 +41,7 @@ button
   padding-bottom: 0
   background: rgba(255,255,255,0.85)
 
-  +media($tablet)
+  +media($small-desktop)
     margin-top: 20px
     padding: 20px
 
@@ -63,26 +64,27 @@ button
       text-align: left
 
     +mediaTo($small-desktop)
-      &:nth-of-type(3n + 3)
-        border-bottom: 1px solid #000000
-        padding-bottom: 10px
-        margin-bottom: 0
-        &:last-of-type
-          border: none
-
-      &:nth-of-type(3n + 4)
-        padding-top: 10px
-        &:last-of-type
-          margin-bottom: 10px
-
+      //&:nth-of-type(3n + 3)
+      //  border-bottom: 1px solid #000000
+      //  padding-bottom: 10px
+      //  margin-bottom: 0
+      //  &:last-of-type
+      //    border: none
+      //
+      //&:nth-of-type(3n + 4)
+      //  padding-top: 10px
+      //  &:last-of-type
+      //    margin-bottom: 10px
+      //
       &:last-of-type
         margin-bottom: 0
 
     span.train-label
       width: 100%
       text-align: left
-      line-height: 45px
+      line-height: 25px
       +media($phone)
+        line-height: 45px
         text-align: right
         position: absolute
         left: 0
@@ -103,18 +105,22 @@ button
   &:last-of-type
     margin-top: 0
     padding-top: 0
+    +mediaTo($small-desktop)
+      padding-bottom: 10px
     +media($small-desktop)
       padding-top: 20px
       margin-top: 20px
     +mediaTo($small-desktop)
       .train-description_item
         &:first-of-type
-          padding-top: 10px
-          border-top: 1px solid $color-black
+          padding-top: 5px
+          //border-top: 1px solid $color-black
 
 .btn-actions
   width: 100%
   margin: 10px 10px 0 0
+  +mediaTo($phone)
+    text-align: center !important
 
   +media($phone)
     width: auto

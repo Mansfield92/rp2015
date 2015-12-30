@@ -77,8 +77,8 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                         echo "<div class='add_form__row'><label for='$row[Field]'>".$usersMap[$row['Field']]."</label><input type='password' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";                    }
                     elseif ($type != 'date') {
                         if($row['Field'] == 'id'){
-                            $id = 'NULL';
-                            echo "<div class='add_form__row'><label for='$row[Field]'>".$usersMap[$row['Field']]."</label><input type='text' name='$row[Field]' value='$id' disabled placeholder='$row[Type]' /></div>";
+//                            $id = 'NULL';
+//                            echo "<div class='add_form__row'><label for='$row[Field]'>".$usersMap[$row['Field']]."</label><input type='text' name='$row[Field]' value='$id' disabled placeholder='$row[Type]' /></div>";
                         }else{
                             $size = substr($type, stripos($type, '(') + 1, (stripos($type, ')') - stripos($type, '(')) - 1);
                             $type = substr($type, 0, stripos($type, '('));

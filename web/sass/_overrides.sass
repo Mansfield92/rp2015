@@ -2,3 +2,62 @@
   .ajax-action
     &:first-of-type
       margin-right: 5px
+
+.no-padding
+  padding: 0 !important
+
+//.detail
+.train-description_item
+  span:last-child
+    background: lighten($color-dark,15%)
+    cursor: not-allowed
+.margin-top50
+  +media($tablet)
+    margin-top: 50px !important
+
+.users-list, .depos-list, .route-list, .station-list
+  &_item
+    &:last-child
+      margin-bottom: 0 !important
+
+.ui-button .ui-button-text
+  line-height: inherit
+  padding: 0
+
+.ui-dialog.ui-widget
+  background: $transparent-back !important
+  min-width: 320px
+  padding: 0 !important
+  border: none !important
+  //min-height: 240px
+
+.ui-dialog-titlebar.ui-widget-header
+  background: $color-dark !important
+  text-align: center
+
+#dialog
+  padding: 10px
+  color: $color-dark
+  min-height: 100px !important
+
+.ui-dialog-buttonpane
+  background: transparent !important
+  margin: 0 !important
+  padding: 5px 0 !important
+  border-top: 1px solid $color-dark-border
+  button
+    padding: 10px 30px
+
+.ui-button
+  //background-image: none !important
+  background: $color-dark !important
+  border: none !important
+  //color: $color-dark !important
+  &:hover
+    span
+      color: $color-dark !important
+  span
+    color: $color-white !important
+    font-weight: bold !important
+    &:hover
+      color: $color-dark !important

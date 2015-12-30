@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $data = isset($_POST['data']) ? $_POST['data'] : false;
 $operation = $_POST['operation'];
 $module = $_POST['module'];
-$mapping = array('trains'=>'vlak', 'users'=>'zamestnanec', 'depo'=>'depo', 'station'=>'stanice','route'=>'trasa');
+$mapping = array('trains'=>'vlak', 'users'=>'zamestnanec', 'depo'=>'depo', 'station'=>'stanice','route'=>'trasa', 'plans'=>'ukony');
 
 include("config/config.db.php");
 
@@ -79,6 +79,13 @@ switch ($operation) {
         $id = $_POST['id'];
         $enable = $_POST['enable'];
         $query = "UPDATE `rocnikovy_projekt`.`trasa` SET `disabled` = ".($enable == 'true' ? '0' : '1')." WHERE `trasa`.`id` = $id";
+        $return = array("response" => $con->query($query), "module" => $module, "operation" => $operation, "query"=>$query);
+        echo json_encode($return);
+        break;
+    case 'change_state':
+        $id = $_POST['id'];
+        $state = $_POST['state'];
+        $query = "UPDATE `ukony` SET `stav` = '$state' WHERE `id_ukon` = $id";
         $return = array("response" => $con->query($query), "module" => $module, "operation" => $operation, "query"=>$query);
         echo json_encode($return);
         break;

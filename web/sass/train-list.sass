@@ -37,6 +37,12 @@
         img
           width: 100%
 
+      &.big-column
+        +media($small-desktop)
+          width: 35%
+      &.small-column
+        +media($small-desktop)
+          width: 15%
       &:last-of-type
         cursor: pointer
         text-align: center
@@ -84,5 +90,9 @@
       +media($small-desktop)
         +size(25%,120px)
         +font(15px,30px)
-#search
+
+#search, .search-input
+  margin: 5px 0
+  +media($tablet)
+    margin-bottom: 0
   @extend %basic-input

@@ -23,6 +23,7 @@ if ($login->is_logged != 1) {
     <title><?php echo $page["title"]; ?></title>
     <link href="css/jquery-ui.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/jquery.switchButton.css" rel="stylesheet">
     <link href="css/main.min.css" rel="stylesheet">
     <link href="img/favicon.png" rel="icon" type="image/png" />
     <!--[if lt IE 9]>
@@ -55,7 +56,8 @@ if ($login->is_logged != 1) {
                 <li><a class="load-page" href="#" data-action="trains-list">Lokomotivy</a></li>
                 <li><a class="load-page" href="#" data-action="users-list">Zaměstnanci</a></li>
                 <li><a class="load-page" href="#" data-action="route-list">Trasy</a></li>
-                <li><a class="load-page" href="#" data-action="users-list">Zaměstnanci</a></li>
+                <li><a class="load-page" href="#" data-action="plans-list">Plánování</a></li>
+<!--                <li><a class="load-page" href="#" data-action="users-list">Zaměstnanci</a></li>-->
 <!--                <li><a class="load-page" href="#" data-action="servis-list">Servis</a></li>-->
 <!--                <li><a class="load-page" href="#" data-action="reports-list">Reporty</a></li>-->
                 <li class="icon-menu">
