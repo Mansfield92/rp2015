@@ -311,7 +311,7 @@ $App.dynamic = function () {
             }
         }
     });
-    if($App.login_role >= 2){
+    if($App.login_role >= 1){
         $App.adminizer();
     }
     setTimeout(function(){destroy_loader()},200);

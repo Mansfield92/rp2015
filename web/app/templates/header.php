@@ -13,6 +13,7 @@ if (isset($_POST['logout'])) {
 if ($login->is_logged != 1) {
     header('location: login.php');
 }
+$role = intval($_SESSION['login_role']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,19 +54,19 @@ if ($login->is_logged != 1) {
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="bs-example-navbar-collapse-8" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a class="load-page" href="#" data-action="depo-list">Depa</a></li>
-                <li><a class="load-page" href="#" data-action="trains-list">Lokomotivy</a></li>
-                <li><a class="load-page" href="#" data-action="users-list">Zaměstnanci</a></li>
-                <li><a class="load-page" href="#" data-action="route-list">Trasy</a></li>
-                <li><a class="load-page" href="#" data-action="plans-list">Plánování</a></li>
-<!--                <li><a class="load-page" href="#" data-action="users-list">Zaměstnanci</a></li>-->
+                <?php if($role >= 4){?><li><a class="load-page" href="#" data-action="depo-list">Depa</a></li>
+                <li><a class="load-page" href="#" data-action="trains-list">Lokomotivy</a></li><?php } ?>
+                <?php if($role == 2 || $role > 4 ){?><li><a class="load-page" href="#" data-action="users-list">Zaměstnanci</a></li><?php } ?>
+                <?php if($role == 1 || $role > 4 ){?><li><a class="load-page" href="#" data-action="route-list">Trasy</a></li><?php } ?>
+                <?php if($role == 1 || $role == 3 || $role > 4 ){?><li><a class="load-page" href="#" data-action="plans-list">Plánování</a></li><?php } ?>
+                <?php if($role == 4){?><li><a class="load-page" href="#" data-action="servis-list">Servis</a></li><?php } ?>
 <!--                <li><a class="load-page" href="#" data-action="servis-list">Servis</a></li>-->
 <!--                <li><a class="load-page" href="#" data-action="reports-list">Reporty</a></li>-->
                 <li class="icon-menu">
                     <a href="#"><img src="icons/profile_white.svg" height="25px" />Profil</a>
                     <div class="user-panel">
                         <div class="user-panel-left">
-                            <img class="user-panel-avatar" src="../img/train.jpg" width="100" height="100" alt="avatar">
+                            <img class="user-panel-avatar" src="upload_pic/<?php echo $_SESSION["avatar"]; ?>" width="100" height="100" alt="avatar">
                         </div><div class="user-panel-right">
                             <div class="user-panel-text"><?php echo $_SESSION['login_name']; ?></div>
                             <button data-user="<?php echo $_SESSION['login_name']; ?>" data-action="login-change-profile" class="btn-actions ajax-action">Úprava profilu</button>

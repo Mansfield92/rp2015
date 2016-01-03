@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 03, 2016 at 11:17 PM
+-- Generation Time: Jan 03, 2016 at 11:47 PM
 -- Server version: 5.6.26
 -- PHP Version: 5.6.12
 
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `kontrola` (
   `kontrola_od` date DEFAULT NULL,
   `kontrola_do` date DEFAULT NULL,
   `vysledek` varchar(1000) COLLATE utf8_czech_ci DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 --
 -- Dumping data for table `kontrola`
@@ -73,7 +73,8 @@ INSERT INTO `kontrola` (`id`, `id_user`, `cislo_zkv`, `datum_expirace`, `kontrol
 (5, 667, '666', '2016-01-01', '2015-01-01', NULL, 'Kontrola probehla uspesne :))'),
 (6, 667, '999vlacek', '2016-12-31', '2013-01-09', NULL, 'Stará kontrola'),
 (7, 667, '77', '2016-01-31', '2015-11-01', NULL, 'bagr'),
-(8, 667, '666', '2016-08-18', '2016-01-01', NULL, 'bagr');
+(8, 667, '666', '2016-08-18', '2016-01-01', NULL, 'bagr'),
+(9, 673, '777', '2016-01-20', '2016-01-01', NULL, 'technik test');
 
 -- --------------------------------------------------------
 
@@ -91,9 +92,11 @@ CREATE TABLE IF NOT EXISTS `role` (
 --
 
 INSERT INTO `role` (`id`, `nazev`) VALUES
-(1, 'Basic'),
-(2, 'Master'),
-(3, 'Admin'),
+(1, 'Dispečer'),
+(2, 'Personální evident'),
+(3, 'Strojvedoucí'),
+(4, 'Technik depa'),
+(5, 'Admin'),
 (69, 'Superadmin');
 
 -- --------------------------------------------------------
@@ -175,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `trasa` (
 --
 
 INSERT INTO `trasa` (`id`, `nazev_trasy`, `stanice1`, `stanice2`, `delka`, `vyluka`, `disabled`) VALUES
-(2, 'Brno -> Mejto', 2, 3, 156, 3, 0),
+(2, 'Brno -> Mejto', 2, 3, 156, 3, 1),
 (3, 'Brno -> Mejto', 2, 3, 35, 6, 0),
 (6, 'Mejto -> Brno', 3, 2, 69, 2, 0);
 
@@ -306,7 +309,7 @@ CREATE TABLE IF NOT EXISTS `zamestnanec` (
   `login` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
   `password` varchar(60) COLLATE utf8_czech_ci DEFAULT NULL,
   `smlouva_do` date DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=673 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=675 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 --
 -- Dumping data for table `zamestnanec`
@@ -317,7 +320,9 @@ INSERT INTO `zamestnanec` (`id`, `img_url`, `druh_pomeru`, `email`, `jmeno`, `pr
 (668, '20151219_222354.jpg', 'Picus', 'p.vomacko@gmail.com', 'dement', '', '', '', '', 0, '', 0, 1, '0000-00-00', '', 'bagr', '2015-12-16'),
 (669, '20151219_222649.jpg', 'Dement', '', 'picus', 'Velký', '', '', '', 0, '', 0, 1, '2015-08-10', 'nejsem_pica', '123456', '2016-01-13'),
 (670, '20151222_113744.jpg', '', '', 'Admin pico!', '', '', '', '', 0, '', 2, 1, '0000-00-00', '', '', '0000-00-00'),
-(672, '20160102_164741.jpg', 'Nasrat', 'pardubice@symbiodigital.com', 'Petr', 'Vomáčko', '608610174', 'Vysoké Mýto', 'Bučina', 95, 'Česká Republika', 2, 3, '2014-11-01', 'mansfield', 'lamer', '2016-01-08');
+(672, '20160102_164741.jpg', 'Nasrat', 'pardubice@symbiodigital.com', 'Petr', 'Vomáčko', '608610174', 'Vysoké Mýto', 'Bučina', 95, 'Česká Republika', 2, 3, '2014-11-01', 'mansfield', 'lamer', '2016-01-08'),
+(673, '20160103_232644.jpg', '', '', 'technik', 'depa', '', '', '', 0, '', 0, 4, '0000-00-00', 'technik', 'bagr', '2016-01-07'),
+(674, '20160103_233857.png', '', '', 'dispicer', '', '', '', '', 0, '', 2, 1, '2016-01-20', 'dispecer', 'pica', '2016-01-22');
 
 --
 -- Indexes for dumped tables
@@ -422,7 +427,7 @@ ALTER TABLE `depo`
 -- AUTO_INCREMENT for table `kontrola`
 --
 ALTER TABLE `kontrola`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `role`
 --
@@ -462,7 +467,7 @@ ALTER TABLE `vyluky`
 -- AUTO_INCREMENT for table `zamestnanec`
 --
 ALTER TABLE `zamestnanec`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=673;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=675;
 --
 -- Constraints for dumped tables
 --

@@ -3,7 +3,7 @@
 include "/app/config/config.db.php";
 
 class login {
-	var $login_name,$login_pw,$is_logged,$checktimelimit,$session_string,$bug,$role,$con;
+	var $login_name,$login_pw,$is_logged,$checktimelimit,$session_string,$bug,$role,$con, $img;
 //    private $users = array(array('name'=>'Neo','pw'=>'lamer','role'=>1),array('name'=>'admin','pw'=>'lamer','role'=>69));
 
 	function login($db){
@@ -26,10 +26,11 @@ class login {
 
     private function testMatch($n,$p){
 
-		$q = $this->con->query("SELECT role,login,password FROM zamestnanec WHERE login='$n' AND  password='$p'");
+		$q = $this->con->query("SELECT role,login,password,img_url FROM zamestnanec WHERE login='$n' AND  password='$p'");
 		if($q->num_rows > 0){
 			$row = $q -> fetch_assoc();
 			$this->role = $row['role'];
+			$this->img = $row['img_url'];
 			return true;
 		}
 		return false;
@@ -48,6 +49,7 @@ class login {
 		$_SESSION['login_name'] = $_POST['login_name'];
 		$_SESSION['login_pw'] = $_POST['login_pw'];
 		$_SESSION['login_role'] = $this->role;
+		$_SESSION['avatar'] = $this->img;
 		$_SESSION['session_string'] = md5($this->login_name.$this->login_pw);
 	}
 
@@ -66,6 +68,7 @@ class login {
 				$this->login_name = $_SESSION['login_name'];
 				$this->login_pw = $_SESSION['login_pw'];
 				$this->role = $_SESSION['login_role'];
+				$this->img = $_SESSION['avatar'];
 				$this->session_string = $_SESSION['session_string'];
 				return (1);
 			}

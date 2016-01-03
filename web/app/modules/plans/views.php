@@ -2,7 +2,7 @@
 session_start();
 include('../../config/config.db.php');
 include('mapping.php');
-if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
+if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
     $view = $_POST['view'];
     if (strpos($view,'detail') !== false) {
         $id = substr($view, 7);

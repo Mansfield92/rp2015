@@ -6,4 +6,4 @@
  * Time: 22:50
  */
 
-$roles = array(1 => 'Basic', 2 => 'Expert', 3 => 'Admin');
+$roles = array(1 => 'Dispečer', 2 => 'Personální evident', 3 => 'Strojvedoucí', 4 => 'Technik depa', 5 => 'Admin');

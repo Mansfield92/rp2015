@@ -437,28 +437,28 @@ select {
     .grid-item {
       width: 380px;
       height: 380px; } }
-  .grid-item:last-child {
+  .grid-item-big {
     width: 100%;
     max-width: 780px; }
-    .grid-item:last-child img {
+    .grid-item-big img {
       height: 50%; }
       @media screen and (min-width: 480px) {
-        .grid-item:last-child img {
+        .grid-item-big img {
           height: 80%;
           float: left;
           margin-left: 30px;
           margin-top: 20px; } }
       @media screen and (min-width: 992px) {
-        .grid-item:last-child img {
+        .grid-item-big img {
           margin-top: 35px;
           margin-left: 50px; } }
     @media screen and (min-width: 480px) {
-      .grid-item:last-child .grid-item_text {
+      .grid-item-big .grid-item_text {
         line-height: 220px;
         margin-top: -20px;
         font-size: 50px; } }
     @media screen and (min-width: 992px) {
-      .grid-item:last-child .grid-item_text {
+      .grid-item-big .grid-item_text {
         margin-top: -35px;
         line-height: 380px;
         font-size: 75px; } }
