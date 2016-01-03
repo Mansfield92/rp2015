@@ -12,10 +12,21 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
     <?php switch ($view): ?><?php case 'list': ?>
         <section class="route">
             <div class="container">
-                <button class="btn-actions btn-add ajax-action" data-action="route-add_form"> Přidat trasu</button><button
+                <button
                     class="btn-actions btn-add ajax-action" data-action="station-add_form"> Přidat stanici</button>
                 <div class="station-list">
                     <h2>Stanice</h2>
+                    <div class="station-list-header">
+                        <div class="station-list-header-item percent30">
+                            Stanice 1
+                        </div><div class="station-list-header-item percent30">
+                            Stanice 2
+                        </div><div class="station-list-header-item percent30">
+                            Stát
+                        </div><div class="station-list-header-item percent10">
+                            Detail
+                        </div>
+                    </div>
                     <?php
                     $query = "SELECT id,nazev, mesto, stat from stanice";
                     $query = $con->query($query);
@@ -41,8 +52,22 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                     } ?>
                 </div>
 
-                <div class="route-list  margin-top50">
+                <button class="btn-actions btn-add ajax-action  margin-top50" data-action="route-add_form"> Přidat trasu</button>
+                <div class="route-list ">
                     <h2>Trasy</h2>
+                    <div class="route-list-header">
+                        <div class="route-list-header-item percent4">
+                            Trasa
+                        </div><div class="route-list-header-item percent4">
+                            Vzdálenost
+                        </div><div class="route-list-header-item percent4">
+                            Výluka
+                        </div><div class="route-list-header-item percent4">
+                            Aktivace
+                        </div><div class="route-list-header-item percent10">
+                            Detail
+                        </div>
+                    </div>
                     <?php
                     $query = "SELECT id,nazev_trasy, delka, vyluka, disabled from trasa";
                     $query = $con->query($query);

@@ -12,13 +12,30 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
     <?php switch ($view): ?><?php case 'list': ?>
         <section class="plans">
             <div class="container">
-                <button class="btn-actions btn-add ajax-action" data-action="plans-add_form"> Naplánovat úkon</button>
-                <button class="btn-actions btn-add export-xml" onclick="window.location.replace('app/export/export.php?id=all')" data-action="export-all"> Exportovat plány</button>
+                <button class="btn-actions btn-add ajax-action" data-action="plans-add_form"> Naplánovat výkon</button>
+                <button class="btn-actions btn-add export-xml" onclick="window.location.replace('app/export/export.php?id=all&extra=alive')" data-action="export-all"> Exportovat aktivní výkony</button>
+                <button class="btn-actions btn-add export-xml" onclick="window.location.replace('app/export/export.php?id=all&extra=dead')" data-action="export-all"> Exportovat ukončené výkony</button>
                 <div class="route-list">
-                    <h2>Úkony</h2>
                     <?php
                     $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv from ukony where stav != 6";
                     $query = $con->query($query);
+                    $flag = false;
+                    if($query->num_rows > 0){$flag = true; ?>
+                        <h2>Aktivní výkony</h2>
+                        <div class="station-list-header">
+                            <div class="station-list-header-item percent4">
+                                Vlak
+                            </div><div class="station-list-header-item percent4">
+                                Počet vagónů
+                            </div><div class="station-list-header-item percent4">
+                                Doba trvání
+                            </div><div class="station-list-header-item percent4">
+                                Stav vlaku
+                            </div><div class="station-list-header-item percent10">
+                                Detail
+                            </div>
+                        </div>
+                        <?php
                     while ($row = $query->fetch_assoc()) { ?>
                         <div class="route-list_item">
                             <div class="route-list_item_column">
@@ -32,11 +49,11 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                                 </div>
                             </div><div class="route-list_item_column">
                                 <div class="route-list_item_text">
-                                    Vagonů: <?php echo $row['pocet_vagonu']; ?>
+                                    <?php echo $row['pocet_vagonu']; ?>
                                 </div>
                             </div><div class="route-list_item_column">
                                 <div class="route-list_item_text">
-                                    Doba trvání: <?php
+                                    <?php
                                     $time = intval($row['cas']);
                                     $hours = floor($time / 60);
                                     $minutes = ($time % 60);
@@ -49,7 +66,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                                     <?php
                                         $states = 'SELECT * from stavy';
                                         $states = $con->query($states);
-                                        echo '<select class="change_state" data-id="'.$row['id_ukon'].'">';
+                                        echo '<select class="change_state" data-train="'.$row['cislo_zkv'].'" data-id="'.$row['id_ukon'].'">';
                                         while($state = $states->fetch_assoc()){
                                             echo "<option value='$state[id_stav]' ".($row['stav'] == $state['id_stav'] ? 'selected' : '').">$state[nazev]</option>";
                                         }
@@ -61,13 +78,26 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                             </div>
                         </div>
                         <?php
-                    } ?>
-                </div>
-                <div class="station-list margin-top50">
-                    <h2>Ukončené úkony</h2>
+                    } }?>
                     <?php
                     $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv from ukony where stav = 6";
                     $query = $con->query($query);
+                    if($query->num_rows > 0){
+                        echo '</div><div class="station-list '.($flag ? 'margin-top50' : '').'">';?>
+
+                        <h2>Ukončené výkony</h2>
+                        <div class="station-list-header">
+                            <div class="station-list-header-item percent30">
+                                Vlak
+                            </div><div class="station-list-header-item percent30">
+                                Počet vagónů
+                            </div><div class="station-list-header-item percent30">
+                                Doba trvání
+                            </div><div class="station-list-header-item percent10">
+                                Detail
+                            </div>
+                        </div>
+                        <?php
                     while ($row = $query->fetch_assoc()) { ?>
                         <div class="station-list_item">
                             <div class="station-list_item_column">
@@ -81,11 +111,11 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                                 </div>
                             </div><div class="station-list_item_column">
                                 <div class="station-list_item_text">
-                                    Vagonů: <?php echo $row['pocet_vagonu']; ?>
+                                    <?php echo $row['pocet_vagonu']; ?>
                                 </div>
                             </div><div class="station-list_item_column">
                                 <div class="station-list_item_text">
-                                    Doba trvání: <?php
+                                    <?php
                                     $time = intval($row['cas']);
                                     $hours = floor($time / 60);
                                     $minutes = ($time % 60);
@@ -98,7 +128,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                             </div>
                         </div>
                         <?php
-                    } ?>
+                    }} ?>
                 </div>
             </div>
         </section>
@@ -109,7 +139,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                 echo "<section class='plans'><div class='container'><div class='add_form'>";
                 while ($row = $query->fetch_assoc()) {
                     $type = $row['Type'];
-                    if($row['Field'] == 'id_ukon'){
+                    if($row['Field'] == 'id_ukon' || $row['Field'] == 'finished'){
                     }elseif ($row['Field'] == 'cislo_zkv') {
                         $depos = $con->query("SELECT cislo_zkv FROM vlak WHERE cislo_zkv not in (select cislo_zkv from ukony where stav != 6)");
                         echo "<div class='add_form__row'><label for='$row[Field]'>".$plansMap[$row['Field']]."</label><select id='$row[Field]' name='$row[Field]'>";
@@ -196,6 +226,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                             $users = $con->query("SELECT jmeno, prijmeni FROM zamestnanec WHERE id = '$data[id_user]'");
                             $user = $users->fetch_row();
                             echo "<div class='train-description_item'><span class='train-label'>$plansMap[$key]: </span><span data-name='$key' >$user[0] $user[1]</span></div>";
+                        }elseif ($row['Field'] == 'id_ukon' || $row['Field'] == 'finished') {
                         }elseif ($row['Field'] == 'id_trasa') {
                             $routes = $con->query("SELECT id, nazev_trasy, vyluka, delka FROM trasa WHERE disabled != '1' AND vyluka != '5'");
                             $rr = $routes->fetch_row();
@@ -203,7 +234,18 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                         }elseif ($row['Field'] == 'stav') {
                             $states = $con->query("SELECT * FROM stavy WHERE id_stav = $data[stav]");
                             $s = $states->fetch_row();
-                            echo "<div class='train-description_item'><span class='train-label'>$plansMap[$key]: </span><span data-name='$key' >$s[1]</span></div>";
+                            $states = 'SELECT * from stavy';
+                            $states = $con->query($states);
+                            if($data['stav'] != 6) {
+                                echo '<div class=\'train-description_item\'><span class=\'train-label\'>' . $plansMap[$key] . ': </span><select class="change_state hidden" data-id="' . $data['id_ukon'] . '" data-train="'.$data['cislo_zkv'].'" >';
+                                while ($state = $states->fetch_assoc()) {
+                                    echo "<option value='$state[id_stav]' " . ($data['stav'] == $state['id_stav'] ? 'selected' : '') . ">$state[nazev]</option>";
+                                }
+                                echo "</select><span data-name='$key' class='adminizer adminizer-hide'>$s[1]</span></div>";
+                            }else {
+                                echo "<div class='train-description_item'><span class='train-label'>$plansMap[$key]: </span><span data-name='$key' >$s[1]</span></div>";
+                            }
+
                         }else {
                             echo "<div class='train-description_item'><span class='train-label'>$plansMap[$key]: </span><span data-name='$key' >$data[$key]</span></div>";
                         }
@@ -211,7 +253,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 3) {
                 }
                 echo "</div>";
 //                echo '<button class="btn-actions ajax-action" data-action="plans-operation-update" data-id="id=\''.$data['id_ukon'].'\'" data-reload="detail_'.$data['id_ukon'].'">Uložit</button>';
-                echo '<button class="btn-actions" onclick="window.location.replace(\'app/export/export.php?id='.$data['id_ukon'].'\')" data-action="export-all"> Exportovat plány</button>';
+                echo '<button class="btn-actions" onclick="window.location.replace(\'app/export/export.php?id='.$data['id_ukon'].'\')" data-action="export-all"> Exportovat výkon</button>';
                 echo '<button class="btn-actions ajax-action" data-action="plans-operation-delete" data-delete="id_ukon=\''.$data['id_ukon'].'\'" data-reload="list">Smazat</button>';
                 echo "<button class='btn-actions load-page' data-action='plans-list'>Zpět na seznam</button></div>";
             }else{

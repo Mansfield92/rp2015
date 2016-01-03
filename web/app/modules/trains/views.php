@@ -14,10 +14,10 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
             <div class="container">
                 <button class="btn-actions btn-add ajax-action" data-action="trains-add_form"> Přidat lokomotivu</button>
                 <div class="search-row">
-                    <input type="text"  class="form-control search-input" data-search="train-list" placeholder="Zadejte hledané číslo vlaku">
+                    <input type="text"  class="form-control search-input" data-search="train-list" placeholder="Filtrace podle čísla vlaku">
                 </div>
                 <div class="train-list">
-                    <?php $query = "SELECT cislo_zkv, rada, datum_preznaceni, flag_eko, km_probeh_po,pocet_naprav, vmax, delka,img_url from vlak";
+                    <?php $query = "SELECT cislo_zkv, pocet_km, datum_preznaceni, flag_eko,pocet_naprav, vmax, delka,img_url from vlak";
                     $query = $con->query($query);
                     while ($row = $query->fetch_assoc()) { ?>
                         <div class="train-list_item" data-search="<?php echo $row['cislo_zkv']; ?>">
@@ -28,7 +28,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                                     <strong><?php echo $trainsMap['cislo_zkv'] ?>:</strong> <?php echo $row['cislo_zkv']; ?>
                                 </div>
                                 <div class="train-list_item_text">
-                                    <strong><?php echo $trainsMap['rada'] ?>:</strong> <?php echo $row['rada']; ?>
+                                    <strong><?php echo $trainsMap['pocet_km'] ?>:</strong> <?php echo $row['pocet_km']; ?>
                                 </div>
                                 <div class="train-list_item_text">
                                     <strong><?php echo $trainsMap['datum_preznaceni'] ?>:</strong> <?php echo $row['datum_preznaceni']; ?>
@@ -41,7 +41,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                                     <strong><?php echo $trainsMap['vmax'] ?>:</strong> <?php echo $row['vmax']; ?> km/h
                                 </div>
                                 <div class="train-list_item_text">
-                                    <strong><?php echo $trainsMap['delka'] ?>:</strong> <?php echo $row['delka']; ?> m
+                                    <strong><?php echo $trainsMap['delka'] ?>:</strong> <?php echo $row['delka']; ?>
                                 </div>
                             </div><div class="train-list_item_column ajax-action small-column" data-action="trains-detail_<?php echo $row['cislo_zkv']; ?>">
                                 <img src="icons/search.svg" alt="icon"/>
@@ -92,7 +92,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                 $rows = $con->query("SHOW COLUMNS from vlak");
                 if($query->num_rows > 0) {
                     $data = $query->fetch_assoc();
-                    echo "<div class='container'><div class='train-header'>ID: $data[cislo_zkv]</div>";
+                    echo "<div class='container'><div class='train-header'>Číslo lokomotivy: $data[cislo_zkv]</div>";
                     echo "<img class='train-detail' alt='train' src='upload_pic/$data[img_url]'><button id='upload_link' data-name='img_url'>Choose File</button><div class='train-description'>";
                     $i = 0;
                     while ($row = $rows->fetch_assoc()) {

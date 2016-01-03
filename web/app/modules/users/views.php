@@ -16,9 +16,20 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
             <div class="container">
                 <button class="btn-actions btn-add ajax-action" data-action="users-add_form"> Přidat zaměstnance</button>
                 <div class="search-row">
-                    <input type="text" id="search" class="form-control" placeholder="Vyhledávání podle jména a příjmení">
+                    <input type="text"  class="form-control search-input" data-search="users-list" placeholder="Vyhledávání podle jména a příjmení">
                 </div>
                 <div class="users-list">
+                    <div class="users-list-header header31">
+                        <div class="users-list-header-item percent30">
+                            Jméno
+                        </div><div class="users-list-header-item percent30">
+                            Email
+                        </div><div class="users-list-header-item percent30">
+                            Role
+                        </div><div class="users-list-header-item percent10">
+                            Detail
+                        </div>
+                    </div>
                     <?php $query = "SELECT img_url,id, jmeno, prijmeni, smlouva_od, role, email from zamestnanec where login != 'admin'";
                     $query = $con->query($query);
                     while ($row = $query->fetch_assoc()) { ?>
@@ -111,7 +122,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                             }
                             $key = $row['Field'];
                             if($row['Type'] == 'date'){
-                                echo "<div class='train-description_item'><span class='train-label'>$key: </span><span data-name='$row[Field]' class='adminizer datepick'>$data[$key]</span></div>";
+                                echo "<div class='train-description_item'><span class='train-label'>$usersMap[$key]: </span><span data-name='$row[Field]' class='adminizer datepick'>$data[$key]</span></div>";
                             }
                             elseif($row['Field'] == 'depo'){
                                 $depos = $con->query("SELECT id, nazev FROM depo");
@@ -140,7 +151,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                                     }
                                 }
                                 echo "</select><span data-name='$key' class='adminizer adminizer-hide'>$val</span></div>";
-                            }else echo "<div class='train-description_item'><span class='train-label'>$key: </span><span data-name='$row[Field]' class='adminizer'>$data[$key]</span></div>";
+                            }else echo "<div class='train-description_item'><span class='train-label'>$usersMap[$key]: </span><span data-name='$row[Field]' class='adminizer'>$data[$key]</span></div>";
                         }
                     }
                     echo "</div>";

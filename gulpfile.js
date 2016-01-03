@@ -17,7 +17,8 @@ gulp.task('normal', function(){
 
 /* COMPRESSED SASS */
 gulp.task('compressed', function(){
-    return sass($input_dir+$compile,{style: 'compressed'})
+    //return sass($input_dir+$compile,{style: 'compressed'})
+    return sass($input_dir+$compile)
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest($output_dir))
 });

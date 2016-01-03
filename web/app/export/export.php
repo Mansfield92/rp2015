@@ -4,6 +4,7 @@ include('../config/config.db.php');
 
 $id = $_GET['id'];
 $all = $id == 'all';
+$extra = isset($_GET['extra']) ? $_GET['extra'] : false;
 $query = "SELECT pocet_vagonu, cas, stavy.nazev as stav, s1.nazev as stanice1, vyluky.nazev as vyluka, stanice.nazev as stanice2, trasa.delka as delka,jmeno, prijmeni,cislo_zkv
 FROM ukony
 LEFT JOIN vlak USING (cislo_zkv)
@@ -16,26 +17,36 @@ LEFT JOIN vyluky on trasa.vyluka = vyluky.id";
 if(!$all){
     $query .= " WHERE id_ukon = $id";
 }
+$query .= $extra ? ($extra == 'dead' ? " WHERE ukony.stav = 6" : " WHERE ukony.stav != 6") : '';
+
+
+//echo $query;
 $ukony = $con->query($query);
 
-$export = "<?xml version='1.0' encoding='UTF-8' ?>\n";
-$export .= $all ? "<Ukony>" : '';
+if($ukony->num_rows > 0) {
 
-while($row = $ukony->fetch_assoc()){
-    $time = intval($row['cas']);
-    $hours = floor($time / 60);
-    $minutes = ($time % 60);
-    $export.="<Ukon>";
-    $export.="<Zamestnanec>$row[jmeno] $row[prijmeni]</Zamestnanec>";
-    $export.="<Trasa><Zacatek>$row[stanice1]</Zacatek><Cil>$row[stanice2]</Cil><Vzdalenost>$row[delka] km</Vzdalenost><Vyluka>$row[vyluka]</Vyluka></Trasa>";
-    $export.="<Pocet_vagonu>$row[pocet_vagonu]</Pocet_vagonu>";
-    $export.="<Cas>".$hours.'h'.($minutes > 0 ? ' '.$minutes.'m' : '')."</Cas>";
-    $export.="<Stav>$row[stav]</Stav></Ukon>";
+    $export = "<?xml version='1.0' encoding='UTF-8' ?>\n";
+    $export .= $all ? "<Ukony>" : '';
+
+    while ($row = $ukony->fetch_assoc()) {
+        $time = intval($row['cas']);
+        $hours = floor($time / 60);
+        $minutes = ($time % 60);
+        $export .= "<Ukon>";
+        $export .= "<Zamestnanec>$row[jmeno] $row[prijmeni]</Zamestnanec>";
+        $export .= "<Trasa><Zacatek>$row[stanice1]</Zacatek><Cil>$row[stanice2]</Cil><Vzdalenost>$row[delka] km</Vzdalenost><Vyluka>$row[vyluka]</Vyluka></Trasa>";
+        $export .= "<Pocet_vagonu>$row[pocet_vagonu]</Pocet_vagonu>";
+        $export .= "<Cas>" . $hours . 'h' . ($minutes > 0 ? ' ' . $minutes . 'm' : '') . "</Cas>";
+        $export .= "<Stav>$row[stav]</Stav></Ukon>";
+    }
+    $export .= $all ? "</Ukony>" : '';
+    $cesta = 'export.xml';
+}else{
+    $export = 'Žádné záznamy k exportu';
+    $cesta = 'empty.txt';
 }
-$export.= $all ? "</Ukony>" : '';
+//echo $export;
 
-
-$cesta = 'db_backup.xml';
 $handle = fopen($cesta,'w+');
 fwrite($handle,$export);
 fclose($handle);

@@ -12,6 +12,7 @@
     background: lighten($color-dark,15%)
     cursor: not-allowed
 .margin-top50
+  margin-top: 10px !important
   +media($tablet)
     margin-top: 50px !important
 
@@ -61,3 +62,30 @@
     font-weight: bold !important
     &:hover
       color: $color-dark !important
+
+body
+  padding-top: 61px !important
+.btn-add
+  +mediaTo($tablet)
+    margin-top: 0
+    margin-bottom: 5px
+
+.navbar-collapse
+  +mediaTo($tablet)
+    ul
+      li
+        &:last-child
+          display: none
+
+.graph
+  display: block
+  margin-top: 10px
+  &:first-of-type
+    margin-top: 0
+  background: $transparent-back
+  +media($small-desktop)
+    display: inline-block
+    width: calc(100% / 3)
+    border-left: 1px solid $color-dark
+    &:first-of-type
+      border-left: none

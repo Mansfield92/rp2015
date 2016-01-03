@@ -23,7 +23,9 @@
         width: 150px
     option
       @extend %basic-input
-    input, select
+    textarea
+      resize: vertical
+    input, select, textarea
       @extend %basic-input
       width: 100%
       +media($phone)

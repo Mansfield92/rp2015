@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 31, 2015 at 05:30 PM
+-- Generation Time: Jan 03, 2016 at 11:17 PM
 -- Server version: 5.6.26
 -- PHP Version: 5.6.12
 
@@ -56,13 +56,24 @@ INSERT INTO `depo` (`id`, `img_url`, `nazev`, `GPS`, `mesto`, `adresa`, `cislo_p
 
 CREATE TABLE IF NOT EXISTS `kontrola` (
   `id` int(11) NOT NULL,
-  `provedl` int(11) DEFAULT NULL,
-  `vlak` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
+  `id_user` int(11) DEFAULT NULL,
+  `cislo_zkv` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
   `datum_expirace` date DEFAULT NULL,
   `kontrola_od` date DEFAULT NULL,
   `kontrola_do` date DEFAULT NULL,
   `vysledek` varchar(1000) COLLATE utf8_czech_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+--
+-- Dumping data for table `kontrola`
+--
+
+INSERT INTO `kontrola` (`id`, `id_user`, `cislo_zkv`, `datum_expirace`, `kontrola_od`, `kontrola_do`, `vysledek`) VALUES
+(2, 667, '_6666', '2016-01-28', '2014-01-01', NULL, 'Kontrola byla na picu :D'),
+(5, 667, '666', '2016-01-01', '2015-01-01', NULL, 'Kontrola probehla uspesne :))'),
+(6, 667, '999vlacek', '2016-12-31', '2013-01-09', NULL, 'Stará kontrola'),
+(7, 667, '77', '2016-01-31', '2015-11-01', NULL, 'bagr'),
+(8, 667, '666', '2016-08-18', '2016-01-01', NULL, 'bagr');
 
 -- --------------------------------------------------------
 
@@ -181,19 +192,26 @@ CREATE TABLE IF NOT EXISTS `ukony` (
   `id_trasa` int(11) NOT NULL,
   `pocet_vagonu` int(10) NOT NULL,
   `cas` int(10) NOT NULL,
-  `stav` int(5) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+  `stav` int(5) NOT NULL DEFAULT '1',
+  `finished` date NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 --
 -- Dumping data for table `ukony`
 --
 
-INSERT INTO `ukony` (`id_ukon`, `cislo_zkv`, `id_user`, `id_trasa`, `pocet_vagonu`, `cas`, `stav`) VALUES
-(2, '666', 669, 6, 10, 136, 6),
-(8, '999vlacek', 668, 3, 17, 66, 6),
-(15, '666699994d5as4', 669, 2, 10, 8, 6),
-(16, '666699994d5as4', 669, 2, 15, 10, 6),
-(17, '77', 671, 6, 3, 4, 1);
+INSERT INTO `ukony` (`id_ukon`, `cislo_zkv`, `id_user`, `id_trasa`, `pocet_vagonu`, `cas`, `stav`, `finished`) VALUES
+(2, '666', 669, 6, 10, 136, 6, '2014-01-02'),
+(8, '999vlacek', 668, 3, 17, 66, 6, '2013-01-01'),
+(22, '777', 668, 3, 15, 16, 6, '2015-03-09'),
+(23, '_6666', 669, 3, 10, 10, 6, '2013-01-02'),
+(24, '4567890', 668, 6, 10, 10, 6, '2016-01-03'),
+(25, '666', 668, 2, 10, 10, 6, '2014-05-14'),
+(26, '_6666', 668, 2, 10, 10, 6, '2016-01-03'),
+(27, '_6666', 669, 6, 15, 132, 6, '2016-01-03'),
+(28, '666699994d5as4', 668, 2, 10, 20, 1, '0000-00-00'),
+(29, '77', 669, 2, 15, 20, 1, '0000-00-00'),
+(30, '777', 670, 2, 15, 20, 1, '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -215,7 +233,7 @@ CREATE TABLE IF NOT EXISTS `vlak` (
   `ele_ohrev` int(11) DEFAULT NULL,
   `vkv` varchar(256) COLLATE utf8_czech_ci DEFAULT NULL,
   `vz` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
-  `km_probeh_po` varchar(8) COLLATE utf8_czech_ci DEFAULT NULL,
+  `pocet_km` int(10) DEFAULT NULL,
   `vmax` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
   `pocet_naprav` int(11) DEFAULT NULL,
   `delka` float(5,2) DEFAULT NULL,
@@ -229,15 +247,16 @@ CREATE TABLE IF NOT EXISTS `vlak` (
 -- Dumping data for table `vlak`
 --
 
-INSERT INTO `vlak` (`cislo_zkv`, `img_url`, `rada`, `sokv`, `UIC_OLD`, `datum_preznaceni`, `m_stav`, `flag_eko`, `elektromer`, `spotreba_nafty`, `ele_ohrev`, `vkv`, `vz`, `km_probeh_po`, `vmax`, `pocet_naprav`, `delka`, `hmotnost`, `brvaha_g`, `brvaha_p`, `depo`) VALUES
-('43843', '20151123_151616.jpg', '', '', '', '2015-11-11', '', 0, 0, 0, 0, '', '', '', '', 0, 0.00, 0, 0.00, 0.00, 1),
-('4567890', '20151125_094646.jpg', '666', 'hbhbjbhjb', 'hhbhjbjhbhj', '2015-11-05', 'hdiudhai', 1, 21312, 12321, 1231321, '999', 'bagr', 'jknjkand', 'dnajdskan', 21123, 122.00, 1212, 22.00, 122.00, 1),
-('666', '20151222_113632.jpg', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', '', '', 0, 0.00, 0, 0.00, 0.00, 1),
-('666699994d5as4', '20151219_222706.png', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', '', '', 0, 0.00, 0, 0.00, 0.00, 0),
-('77', '20151123_151659.png', '', '', '', '0000-00-00', 'bagr', 0, 0, 0, 0, '', '666', '', '', 0, 0.00, 0, 0.00, 0.00, 0),
-('777', '20151219_222215.jpg', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', '', '', 0, 0.00, 0, 0.00, 0.00, 0),
-('7777', '20151123_151527.jpg', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', '', '', 0, 0.00, 0, 0.00, 0.00, 1),
-('999vlacek', '20151219_223016.jpg', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', '', '', 0, 0.00, 0, 0.00, 0.00, 0);
+INSERT INTO `vlak` (`cislo_zkv`, `img_url`, `rada`, `sokv`, `UIC_OLD`, `datum_preznaceni`, `m_stav`, `flag_eko`, `elektromer`, `spotreba_nafty`, `ele_ohrev`, `vkv`, `vz`, `pocet_km`, `vmax`, `pocet_naprav`, `delka`, `hmotnost`, `brvaha_g`, `brvaha_p`, `depo`) VALUES
+('_6666', '20160102_232958.jpg', 'Satan', 'Satan666', NULL, '2016-01-13', NULL, NULL, 10, 10, NULL, NULL, NULL, 1596, '166', 15, 32.00, 66, 4.00, NULL, 2),
+('43843', '20151123_151616.jpg', '', '', '', '2015-11-11', '', 0, 0, 0, 0, '', '', 6666, '', 0, 0.00, 0, 0.00, 0.00, 1),
+('4567890', '20151125_094646.jpg', '666', 'hbhbjbhjb', 'hhbhjbjhbhj', '2015-11-05', 'hdiudhai', 1, 21312, 12321, 1231321, '999', 'bagr', 138, 'dnajdskan', 21123, 122.00, 1212, 22.00, 122.00, 1),
+('666', '20151222_113632.jpg', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', 156, '', 0, 0.00, 0, 0.00, 0.00, 2),
+('666699994d5as4', '20151219_222706.png', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', 35, '', 0, 0.00, 0, 0.00, 0.00, 0),
+('77', '20151123_151659.png', '', '', '', '0000-00-00', 'bagr', 0, 0, 0, 0, '', '666', 0, '', 0, 0.00, 0, 0.00, 0.00, 0),
+('777', '20151219_222215.jpg', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', 35, '', 0, 0.00, 0, 0.00, 0.00, 0),
+('7777', '20151123_151527.jpg', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', 0, '', 0, 0.00, 0, 0.00, 0.00, 1),
+('999vlacek', '20151219_223016.jpg', '', '', '', '0000-00-00', '', 0, 0, 0, 0, '', '', 0, '', 0, 0.00, 0, 0.00, 0.00, 0);
 
 -- --------------------------------------------------------
 
@@ -287,18 +306,18 @@ CREATE TABLE IF NOT EXISTS `zamestnanec` (
   `login` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
   `password` varchar(60) COLLATE utf8_czech_ci DEFAULT NULL,
   `smlouva_do` date DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=672 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=673 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 --
 -- Dumping data for table `zamestnanec`
 --
 
 INSERT INTO `zamestnanec` (`id`, `img_url`, `druh_pomeru`, `email`, `jmeno`, `prijmeni`, `telefon`, `mesto`, `adresa`, `cislo_popisne`, `stat`, `depo`, `role`, `smlouva_od`, `login`, `password`, `smlouva_do`) VALUES
-(667, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 69, NULL, 'admin', 'lamer', NULL),
-(668, '20151219_222354.jpg', 'Picus', '', 'dement', '', '', '', '', 0, '', 0, 1, '0000-00-00', '', 'bagr', '2015-12-16'),
-(669, '20151219_222649.jpg', 'Dement', '', 'picus', '', '', '', '', 0, '', 0, 1, '0000-00-00', 'nejsem_pica', '123456', '0000-00-00'),
+(667, '', NULL, NULL, 'admin', 'pico', NULL, NULL, NULL, NULL, NULL, 1, 69, NULL, 'admin', 'lamer', NULL),
+(668, '20151219_222354.jpg', 'Picus', 'p.vomacko@gmail.com', 'dement', '', '', '', '', 0, '', 0, 1, '0000-00-00', '', 'bagr', '2015-12-16'),
+(669, '20151219_222649.jpg', 'Dement', '', 'picus', 'Velký', '', '', '', 0, '', 0, 1, '2015-08-10', 'nejsem_pica', '123456', '2016-01-13'),
 (670, '20151222_113744.jpg', '', '', 'Admin pico!', '', '', '', '', 0, '', 2, 1, '0000-00-00', '', '', '0000-00-00'),
-(671, '20151229_231602.jpg', 'Kokot', '', 'Hovado', '', '', '', '', 0, '', 2, 1, '0000-00-00', '', '', '0000-00-00');
+(672, '20160102_164741.jpg', 'Nasrat', 'pardubice@symbiodigital.com', 'Petr', 'Vomáčko', '608610174', 'Vysoké Mýto', 'Bučina', 95, 'Česká Republika', 2, 3, '2014-11-01', 'mansfield', 'lamer', '2016-01-08');
 
 --
 -- Indexes for dumped tables
@@ -317,8 +336,8 @@ ALTER TABLE `depo`
 ALTER TABLE `kontrola`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UQ_Kontrola_id` (`id`),
-  ADD KEY `vlak` (`vlak`),
-  ADD KEY `provedl` (`provedl`);
+  ADD KEY `vlak` (`cislo_zkv`),
+  ADD KEY `provedl` (`id_user`);
 
 --
 -- Indexes for table `role`
@@ -403,7 +422,7 @@ ALTER TABLE `depo`
 -- AUTO_INCREMENT for table `kontrola`
 --
 ALTER TABLE `kontrola`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `role`
 --
@@ -433,7 +452,7 @@ ALTER TABLE `trasa`
 -- AUTO_INCREMENT for table `ukony`
 --
 ALTER TABLE `ukony`
-  MODIFY `id_ukon` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+  MODIFY `id_ukon` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=31;
 --
 -- AUTO_INCREMENT for table `vyluky`
 --
@@ -443,7 +462,7 @@ ALTER TABLE `vyluky`
 -- AUTO_INCREMENT for table `zamestnanec`
 --
 ALTER TABLE `zamestnanec`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=672;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=673;
 --
 -- Constraints for dumped tables
 --
@@ -452,8 +471,8 @@ ALTER TABLE `zamestnanec`
 -- Constraints for table `kontrola`
 --
 ALTER TABLE `kontrola`
-  ADD CONSTRAINT `FK_Kontrola_Vlak` FOREIGN KEY (`vlak`) REFERENCES `vlak` (`cislo_zkv`),
-  ADD CONSTRAINT `FK_Kontrola_Zamestnanec` FOREIGN KEY (`provedl`) REFERENCES `zamestnanec` (`id`);
+  ADD CONSTRAINT `FK_Kontrola_Vlak` FOREIGN KEY (`cislo_zkv`) REFERENCES `vlak` (`cislo_zkv`),
+  ADD CONSTRAINT `FK_Kontrola_Zamestnanec` FOREIGN KEY (`id_user`) REFERENCES `zamestnanec` (`id`);
 
 --
 -- Constraints for table `sklad`

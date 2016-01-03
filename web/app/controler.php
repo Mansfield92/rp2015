@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $data = isset($_POST['data']) ? $_POST['data'] : false;
 $operation = $_POST['operation'];
 $module = $_POST['module'];
-$mapping = array('trains'=>'vlak', 'users'=>'zamestnanec', 'depo'=>'depo', 'station'=>'stanice','route'=>'trasa', 'plans'=>'ukony');
+$mapping = array('trains'=>'vlak', 'users'=>'zamestnanec', 'depo'=>'depo', 'station'=>'stanice','route'=>'trasa', 'plans'=>'ukony', 'servis'=>'kontrola');
 
 include("config/config.db.php");
 
@@ -85,8 +85,20 @@ switch ($operation) {
     case 'change_state':
         $id = $_POST['id'];
         $state = $_POST['state'];
-        $query = "UPDATE `ukony` SET `stav` = '$state' WHERE `id_ukon` = $id";
-        $return = array("response" => $con->query($query), "module" => $module, "operation" => $operation, "query"=>$query);
+        $query = "UPDATE `ukony` SET `stav` = '$state', finished = CURDATE() WHERE `id_ukon` = $id";
+        if($state == 6){
+            $train = $_POST['train'];
+            $route = "SELECT delka from ukony left join trasa on ukony.id_trasa = trasa.id where id_ukon = $id";
+            $route = $con->query($route);
+            $route = $route->fetch_row();
+            $route = intval($route[0]);
+            $act = $con->query("SELECT pocet_km from vlak where cislo_zkv = '$train'");
+            $act = $act->fetch_row();
+            $act = intval($act[0]);
+            $update = "UPDATE `rocnikovy_projekt`.`vlak` SET `pocet_km` = '".($act+$route)."' WHERE `vlak`.`cislo_zkv` = '$train'";
+            $con->query($update);
+        }
+        $return = array("response" => $con->query($query), "module" => $module, "operation" => $operation, "query"=>$update ? $update : $query);
         echo json_encode($return);
         break;
 }

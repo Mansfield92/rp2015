@@ -90,10 +90,76 @@ $App.executeOperation = function (module, $data, $reload) {
 };
 
 $App.dynamic = function () {
+    if($('.route-switch').length > 0){
+        $( window ).resize(function() {
+            setTimeout(function(){
+            $('.to_switch').each(function(){
+                $(this).find('input').removeAttr('style');
+                $(this).html($(this).find('input').get( 0 ));
+            });
+                $App.routes();},550);
+        });
+    }
     $App.routes();
     $App.executeOperation('login',{operation: 'login_role',module: 'login'});
 
-    $('.datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
+    $('.datepicker').each(function(){
+        if($(this).hasClass('nofuture')){
+            $(this).datepicker({maxDate: new Date,dateFormat: 'yy-mm-dd'});
+        }else if($(this).hasClass('future')){
+            $(this).datepicker({minDate: new Date,dateFormat: 'yy-mm-dd'});
+        }else{
+            $(this).datepicker({dateFormat: 'yy-mm-dd'});
+        }
+    });
+
+    if($('.graph').length > 0){
+        $( window ).resize(function() {
+            setTimeout(function(){
+                F5();
+            },10);
+        });
+    }
+
+    if($('#graph-km').length > 0) {
+        var $val1 = $('#graph-km').data('val1');
+        var $val2 = $('#graph-km').data('val2');
+
+        new Morris.Donut({
+            element: 'graph-km',
+            data: [
+                {label: "Kilometrů tento rok", value: $val1},
+                {label: "Kilometrů ostatní roky", value: $val2}
+            ]
+        });
+    }
+
+    if($('#graph-event').length > 0) {
+        var $val1 = $('#graph-event').data('val1');
+        var $val2 = $('#graph-event').data('val2');
+
+        new Morris.Donut({
+            element: 'graph-event',
+            data: [
+                {label: "Úkonů tento rok", value: $val1},
+                {label: "Úkonů ostatní roky", value: $val2}
+            ]
+        });
+    }
+
+    if($('#graph-servis').length > 0) {
+        var $val1 = $('#graph-servis').data('val1');
+        var $val2 = $('#graph-servis').data('val2');
+
+        new Morris.Donut({
+            element: 'graph-servis',
+            data: [
+                {label: "Servisů tento rok", value: $val1},
+                {label: "Servisů ostatní roky", value: $val2}
+            ]
+        });
+    }
+
     $App.myUpload = $('#upload_link').upload({
         name: 'image',
         action: 'app/modules/image_upload/image_handling.php',
@@ -109,14 +175,15 @@ $App.dynamic = function () {
 
     $('.change_state').change(function(){
         var $id = $(this).data('id');
+        var $train = $(this).data('train');
         var $newState = $(this).val();
-        log($id + ' - ' + $newState);
+        log($id + ' - ' + $newState + ' - ' + $train);
 
         var getData = $.ajax({
             dataType: 'json',
             type: 'POST',
             url: "app/controler.php",
-            data: {module:'plans',operation:'change_state',id:$id, state: $newState},
+            data: {module:'plans',operation:'change_state',id:$id, state: $newState, train:$train},
             success: function (data) {
                 if($newState == 6)$App.loadPage('plans', 'list');
             }
@@ -193,7 +260,7 @@ $App.dynamic = function () {
                 }});
             }else {
                 var $data = "";
-                $('.add_form__row > input, .train-description_item > input,.train-description_item > select, .add_form__row select').each(function () {
+                $('.add_form > input,.add_form > div > input,.add_form > div > textarea, .train-description_item > input,.train-description_item > select, .add_form__row select').each(function () {
                     $data += $(this).attr('name') + "[^]" + $(this).val() + "$^$";
                 });
                 //log($action[0] + " = " + $action[1] + " = " + $action[2]);
@@ -275,7 +342,8 @@ function validate(type,data){
 }
 
 $App.routes = function(){
-    var $width = parseInt($('.route-list_item_column').width());
+    var $width = parseInt($('.route-list_item_column:first').width());
+
     $('.route-switch').switchButton({
         width: $width+2,
         height: 40,
@@ -340,8 +408,16 @@ $App.adminizer = function(){
             var $datepic = $this.hasClass('datepick');
             var $name = $this.data('name');
             if ($datepic) {
-                $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
-                $('.datepic').datepicker({dateFormat: 'yy-mm-dd'});
+                if($this.hasClass('nofuture')){
+                    $('.datepic').datepicker({maxDate: new Date,dateFormat: 'yy-mm-dd'});
+                    $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
+                }else if($this.hasClass('future')){
+                    $('.datepic').datepicker({minDate: new Date,dateFormat: 'yy-mm-dd'});
+                    $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
+                }else{
+                    $('.datepic').datepicker({dateFormat: 'yy-mm-dd'});
+                    $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
+                }
             } else {
                 if($name == 'password')$this.replaceWith('<input type="password" name="' + $name + '" value="' + $html + '" />');
                 else $this.replaceWith('<input type="text" name="' + $name + '" value="' + $html + '" />');
@@ -353,16 +429,21 @@ $App.adminizer = function(){
 
 $App.init = function () {
 
-    $('html').unbind('click').bind('click',function() {
-        //log($('.navbar-toggle').hasClass('collapsed'));
-        if(!$('.navbar-toggle').hasClass('collapsed')) {
-            //log('bagr');
-            //$(this).click();
-            $('#bs-example-navbar-collapse-8').removeClass('in');
-            $(this).removeClass('collapsed');
-            //if($('#bs-example-navbar-collapse-8').hasClass('in')){
-            //    log('outside click');
-            //}
+    $('html').unbind('click').bind('click',function(e) {
+        //log(e.target);
+        if(!$(e.target).is('.navbar-toggle')) {
+            if ($('#bs-example-navbar-collapse-8').hasClass('in')) {
+                log($(e.target).is('.navbar-toggle'));
+                $('#bs-example-navbar-collapse-8').addClass('navbar-collapsing').animate({
+                    height: '1px'
+                }, 500, function () {
+                    $(this).removeClass('in navbar-collapsing').removeAttr('style');
+                });
+                //$(this).removeClass('collapsed');
+                //if($('#bs-example-navbar-collapse-8').hasClass('in')){
+                //    log('outside click');
+                //}
+            }
         }
     });
 
