@@ -20,7 +20,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                 <?php } ?>
                 <div class="route-list">
                     <?php
-                    $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv from ukony where stav < 5";
+                    $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv, jmeno, prijmeni from ukony left join zamestnanec on ukony.id_user = zamestnanec.id where stav < 5";
 
                     $userID = "SELECT id FROM `zamestnanec` WHERE login = '$_SESSION[login_name]'";
                     $userID = $con->query($userID);
@@ -38,7 +38,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                             <div class="station-list-header-item percent4">
                                 Vlak
                             </div><div class="station-list-header-item percent4">
-                                Počet vagónů
+                                Strojvůdce
                             </div><div class="station-list-header-item percent4">
                                 Doba trvání
                             </div><div class="station-list-header-item percent4">
@@ -52,16 +52,16 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                         <div class="route-list_item">
                             <div class="route-list_item_column">
                                 <div class="route-list_item_text no-padding">
-                                    <?php
+<!--                                    --><?php
                                     $states = "SELECT rada from vlak where cislo_zkv = '$row[cislo_zkv]'";
                                     $states = $con->query($states);
                                     $state = $states->fetch_row();
                                     echo $row['cislo_zkv'].' ('.$state[0].')';
-                                    ?>
+//                                    ?>
                                 </div>
                             </div><div class="route-list_item_column">
                                 <div class="route-list_item_text">
-                                    <?php echo $row['pocet_vagonu']; ?>
+                                    <?php echo $row['jmeno'].' '.$row['prijmeni']; ?>
                                 </div>
                             </div><div class="route-list_item_column">
                                 <div class="route-list_item_text">
@@ -98,18 +98,28 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                         echo $role == 3 ? '<p>Zadne naplanovane ukony</p>' : '';
                     }?>
                     <?php
-                    if($role == 1 || $role > 4){
-                    $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv from ukony where stav >= 5";
+//                    if($role == 1 || $role > 4){
+
+                    $userID = "SELECT id FROM `zamestnanec` WHERE login = '$_SESSION[login_name]'";
+                    $userID = $con->query($userID);
+                    $userID = $userID->fetch_row();
+                    $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv, jmeno, prijmeni from ukony left join zamestnanec on ukony.id_user = zamestnanec.id where stav >= 5";
+                    $query.= $role == 3 ? ' AND id_user = '.$userID[0] : '';
                     $query = $con->query($query);
                     if($query->num_rows > 0){
                         echo '</div><div class="station-list '.($flag ? 'margin-top50' : '').'">';?>
 
                         <h2>Ukončené výkony</h2>
+                        <?php if($role != 3){?>
+                        <div class="search-row">
+                            <input type="text" placeholder="Filtrace podle čísla vlaku a zaměstance" data-search="station-list" class="form-control search-input">
+                        </div>
+                            <?php }?>
                         <div class="station-list-header">
                             <div class="station-list-header-item percent30">
                                 Vlak
                             </div><div class="station-list-header-item percent30">
-                                Počet vagónů
+                                Strojvůdce
                             </div><div class="station-list-header-item percent30">
                                 Doba trvání
                             </div><div class="station-list-header-item percent10">
@@ -118,9 +128,9 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                         </div>
                         <?php
                     while ($row = $query->fetch_assoc()) { ?>
-                        <div class="station-list_item <?php echo (intval($row['stav']) == 5 ? 'plan_canceled' : '') ?>">
+                        <div class="station-list_item <?php echo (intval($row['stav']) == 5 ? 'plan_canceled' : '') ?>" data-search="<?php echo $row['cislo_zkv'].$row['jmeno'].' '.$row['prijmeni']; ?>">
                             <div class="station-list_item_column">
-                                <div class="route-list_item_text no-padding">
+                                <div class="station-list_item_text no-padding">
                                     <?php
                                     $states = "SELECT rada from vlak where cislo_zkv = '$row[cislo_zkv]'";
                                     $states = $con->query($states);
@@ -130,7 +140,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                                 </div>
                             </div><div class="station-list_item_column">
                                 <div class="station-list_item_text">
-                                    <?php echo $row['pocet_vagonu']; ?>
+                                    <?php echo $row['jmeno'].' '.$row['prijmeni']; ?>
                                 </div>
                             </div><div class="station-list_item_column">
                                 <div class="station-list_item_text">
@@ -147,7 +157,9 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                             </div>
                         </div>
                         <?php
-                    }} }?>
+                    }
+//                    }
+    }?>
                 </div>
             </div>
         </section>
@@ -247,7 +259,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                             echo "<div class='train-description_item'><span class='train-label'>$plansMap[$key]: </span><span data-name='$key' >$user[0] $user[1]</span></div>";
                         }elseif ($row['Field'] == 'id_ukon' || $row['Field'] == 'finished') {
                         }elseif ($row['Field'] == 'id_trasa') {
-                            $routes = $con->query("SELECT trasa.id, nazev_trasy, vyluky.nazev, delka FROM trasa left join vyluky on trasa.vyluka = vyluky.id WHERE disabled != '1' AND vyluka != '5'");
+                            $routes = $con->query("SELECT trasa.id, nazev_trasy, vyluky.nazev, delka FROM trasa left join vyluky on trasa.vyluka = vyluky.id WHERE disabled != '1' AND vyluka != '5' AND trasa.id = $data[id_trasa]");
                             $rr = $routes->fetch_row();
                             echo "<div class='train-description_item'><span class='train-label'>$plansMap[$key]: </span><span data-name='$key' >$rr[1]          ".($rr[2] ? '('.$rr[2].')' : '').", Vzdálenost: $rr[3] km</span></div>";
                         }elseif ($row['Field'] == 'stav') {

@@ -70,7 +70,7 @@ $role = intval($_SESSION['login_role']);
                         </div><div class="user-panel-right">
                             <div class="user-panel-text"><?php echo $_SESSION['login_name']; ?></div>
                             <button data-user="<?php echo $_SESSION['login_name']; ?>" data-action="login-change-profile" class="btn-actions ajax-action">Úprava profilu</button>
-                            <?php if(intval($_SESSION["login_role"]) >= 3){?><button data-action="users-list" class="btn-actions load-page">Úprava uživatelů</button><?php }?>
+                            <?php if(intval($_SESSION["login_role"]) >= 5){?><button data-action="users-list" class="btn-actions load-page">Úprava uživatelů</button><?php }?>
                             <button onclick="logout();" class="btn-actions ajax-action">Odhlásit se</button>
                         </div>
                     </div>

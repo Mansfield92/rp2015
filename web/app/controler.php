@@ -86,6 +86,7 @@ switch ($operation) {
         $id = $_POST['id'];
         $state = $_POST['state'];
         $query = "UPDATE `ukony` SET `stav` = '$state', finished = CURDATE() WHERE `id_ukon` = $id";
+        $update = false;
         if($state == 6){
             $train = $_POST['train'];
             $route = "SELECT delka from ukony left join trasa on ukony.id_trasa = trasa.id where id_ukon = $id";
