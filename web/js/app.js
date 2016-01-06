@@ -185,7 +185,7 @@ $App.dynamic = function () {
             url: "app/controler.php",
             data: {module:'plans',operation:'change_state',id:$id, state: $newState, train:$train},
             success: function (data) {
-                if($newState == 6)$App.loadPage('plans', 'list');
+                if($newState >= 5)$App.loadPage('plans', 'list');
             }
         });
     });
@@ -409,14 +409,14 @@ $App.adminizer = function(){
             var $name = $this.data('name');
             if ($datepic) {
                 if($this.hasClass('nofuture')){
+                    $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
                     $('.datepic').datepicker({maxDate: new Date,dateFormat: 'yy-mm-dd'});
-                    $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
                 }else if($this.hasClass('future')){
+                    $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
                     $('.datepic').datepicker({minDate: new Date,dateFormat: 'yy-mm-dd'});
-                    $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
                 }else{
-                    $('.datepic').datepicker({dateFormat: 'yy-mm-dd'});
                     $this.replaceWith('<input class="datepic" name="' + $name + '" type="text" value="' + $html + '" />');
+                    $('.datepic').datepicker({dateFormat: 'yy-mm-dd'});
                 }
             } else {
                 if($name == 'password')$this.replaceWith('<input type="password" name="' + $name + '" value="' + $html + '" />');

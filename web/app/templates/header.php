@@ -61,7 +61,7 @@ $role = intval($_SESSION['login_role']);
                 <?php if($role == 1 || $role == 3 || $role > 4 ){?><li><a class="load-page" href="#" data-action="plans-list">Plánování</a></li><?php } ?>
                 <?php if($role == 4){?><li><a class="load-page" href="#" data-action="servis-list">Servis</a></li><?php } ?>
 <!--                <li><a class="load-page" href="#" data-action="servis-list">Servis</a></li>-->
-<!--                <li><a class="load-page" href="#" data-action="reports-list">Reporty</a></li>-->
+                <?php if($role == 1){?><li><a class="load-page" href="#" data-action="reports-list">Reporty</a></li><?php } ?>
                 <li class="icon-menu">
                     <a href="#"><img src="icons/profile_white.svg" height="25px" />Profil</a>
                     <div class="user-panel">

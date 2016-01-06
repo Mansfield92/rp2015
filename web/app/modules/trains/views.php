@@ -2,7 +2,7 @@
 session_start();
 include('../../config/config.db.php');
 include('mapping.php');
-if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
+if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 1) {
     $view = $_POST['view'];
     if (strpos($view,'detail') !== false) {
         $id = substr($view, 7);
@@ -61,7 +61,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                     $type = $row['Type'];
                     $f = $row['Field'];
                     if ($row['Field'] == 'img_url') {
-                        echo "<div class='add_form__row'><label for='$row[Field]'>".$trainsMap[$row['Field']]."</label><button id='upload_link' data-name='$row[Field]'>Choose File</button></div>";
+                        echo "<div class='add_form__row'><label for='$row[Field]'>".$trainsMap[$row['Field']]."</label><button id='upload_link' data-name='$row[Field]'>Vybrat obrázek</button></div>";
                     } elseif($row['Field'] == 'depo'){
                         $depos = $con->query("SELECT id, nazev FROM depo");
                         echo "<div class='add_form__row'><label for='$row[Field]'>".$trainsMap[$row['Field']]."</label><select id='depo' name='depo'>";
@@ -93,7 +93,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                 if($query->num_rows > 0) {
                     $data = $query->fetch_assoc();
                     echo "<div class='container'><div class='train-header'>Číslo lokomotivy: $data[cislo_zkv]</div>";
-                    echo "<img class='train-detail' alt='train' src='upload_pic/$data[img_url]'><button id='upload_link' data-name='img_url'>Choose File</button><div class='train-description'>";
+                    echo "<img class='train-detail' alt='train' src='upload_pic/$data[img_url]'><button id='upload_link' data-name='img_url'>Vybrat obrázek</button><div class='train-description'>";
                     $i = 0;
                     while ($row = $rows->fetch_assoc()) {
                         if ($row['Field'] != 'cislo_zkv' && $row['Field'] != 'img_url') {

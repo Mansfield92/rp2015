@@ -1,8 +1,6 @@
 <?php
 session_start();
-include('../../config/config.db.php');
-if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {?>
-
+include('../../config/config.db.php');?>
         <section class="servis">
             <div class="container">
 
@@ -10,13 +8,13 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {?>
 
                 $km = "select sum(delka) from ukony left join trasa on ukony.id_trasa = trasa.id where ukony.finished >= DATE_SUB(NOW(),INTERVAL 1 YEAR) and ukony.stav = 6";
                 $km = $con->query($km);
-                $km = $km->fetch_row();
-                $km = $km[0];
+                $km = $km->num_rows > 0 ? $km->fetch_row() : 0;
+                $km = $km == 0 ? 0 : $km[0];
 
                 $kmAll = "select sum(delka) from ukony left join trasa on ukony.id_trasa = trasa.id where ukony.stav = 6 AND ukony.finished < DATE_SUB(NOW(),INTERVAL 1 YEAR)";
                 $kmAll= $con->query($kmAll);
                 $kmAll= $kmAll->fetch_row();
-                $kmAll = $kmAll[0];
+                $kmAll = count($kmAll[0]) > 0 ? $kmAll[0] : 0;
 
                 $events = "select count(*) from ukony where ukony.stav = 6 AND ukony.finished >= DATE_SUB(NOW(),INTERVAL 1 YEAR)";
                 $events= $con->query($events);
@@ -44,7 +42,8 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {?>
                 echo "<div class='graph' id='graph-servis' data-val1='$servis' data-val2='$servisAll'></div>";
 
                 ?>
-
+                <button class="btn-actions btn-add export-xml margin-top50" onclick="window.location.replace('app/export/export-report.php?old=0')"> Exportovat aktivní servisní úkony</button>
+<!--                <button class="btn-actions btn-add export-xml margin-top50" onclick="window.location.replace('app/export/export-report.php?old=1')"> Exportovat minulé servisní úkony</button>-->
                 <div class="search-row">
                     <input type="text" class="form-control search-input" data-search="report-list" placeholder="Filtrace podle čísla vlaku">
                 </div>
@@ -82,4 +81,3 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {?>
                 </div>
             </div>
         </section>
-<?php }

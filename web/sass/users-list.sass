@@ -152,14 +152,14 @@
         width: calc(100% / 3)
   &_item
     &_column
-      &:last-of-type
-
       +media($small-desktop)
         width: calc(100% / 3) !important
 
 
 .station-list
   &_item
+    &.plan_canceled
+      background: $transparent-back-grey
     &:last-of-type
       margin-bottom: 5px
 

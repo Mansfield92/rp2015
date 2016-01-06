@@ -2,7 +2,6 @@
 session_start();
 include('../../config/config.db.php');
 include('mapping.php');
-if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
     $view = $_POST['view'];
     if (strpos($view,'detail') !== false) {
         $id = substr($view, 7);
@@ -68,7 +67,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
                     if ($row['Field'] == 'img_url') {
                         echo "<div class='add_form__row'><label for='$row[Field]'>".$depoMap[$row['Field']]."</label><button id='upload_link' data-name='$row[Field]'>Vybrat obrázek</button></div>";
                     } elseif ($type != 'date') {
-                        if($row['Field'] == 'id'){
+                        if($row['Field'] == 'id' || $row['Field'] == 'kapacita' ){
 //                            $id = 'NULL';
 //                            echo "<div class='add_form__row'><label for='$row[Field]'>".$depoMap[$row['Field']]."</label><input type='text' name='$row[Field]' value='$id' disabled placeholder='$row[Type]' /></div>";
                         }else {
@@ -124,4 +123,3 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) > 2) {
             break;
             ?>
         <?php endswitch ?>
-<?php }

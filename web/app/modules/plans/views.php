@@ -2,6 +2,8 @@
 session_start();
 include('../../config/config.db.php');
 include('mapping.php');
+$role = intval($_SESSION['login_role']);
+
 if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
     $view = $_POST['view'];
     if (strpos($view,'detail') !== false) {
@@ -12,12 +14,22 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
     <?php switch ($view): ?><?php case 'list': ?>
         <section class="plans">
             <div class="container">
-                <button class="btn-actions btn-add ajax-action" data-action="plans-add_form"> Naplánovat výkon</button>
-                <button class="btn-actions btn-add export-xml" onclick="window.location.replace('app/export/export.php?id=all&extra=alive')" data-action="export-all"> Exportovat aktivní výkony</button>
+                <?php if($role == 1 || $role > 4){?><button class="btn-actions btn-add ajax-action" data-action="plans-add_form"> Naplánovat výkon</button>
+                    <button class="btn-actions btn-add export-xml" onclick="window.location.replace('app/export/export.php?id=all&extra=alive')" data-action="export-all"> Exportovat aktivní výkony</button>
                 <button class="btn-actions btn-add export-xml" onclick="window.location.replace('app/export/export.php?id=all&extra=dead')" data-action="export-all"> Exportovat ukončené výkony</button>
+                <?php } ?>
                 <div class="route-list">
                     <?php
-                    $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv from ukony where stav != 6";
+                    $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv from ukony where stav < 5";
+
+                    $userID = "SELECT id FROM `zamestnanec` WHERE login = '$_SESSION[login_name]'";
+                    $userID = $con->query($userID);
+                    $userID = $userID->fetch_row();
+
+                    if($role == 3){
+                        $query.= " AND id_user = $userID[0]";
+                    }
+
                     $query = $con->query($query);
                     $flag = false;
                     if($query->num_rows > 0){$flag = true; ?>
@@ -68,7 +80,11 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                                         $states = $con->query($states);
                                         echo '<select class="change_state" data-train="'.$row['cislo_zkv'].'" data-id="'.$row['id_ukon'].'">';
                                         while($state = $states->fetch_assoc()){
-                                            echo "<option value='$state[id_stav]' ".($row['stav'] == $state['id_stav'] ? 'selected' : '').">$state[nazev]</option>";
+                                            if(($role == 3 && $state['id_stav'] == 2 ||  $state['id_stav']  == 3) || ($role == 1 || $role > 4)) {
+                                                echo "<option value='$state[id_stav]' " . ($row['stav'] == $state['id_stav'] ? 'selected' : '') . ">$state[nazev]</option>";
+                                            }elseif($role == 3 && $row['stav'] == $state['id_stav']){
+                                                echo "<option value='$state[id_stav]' " . ($row['stav'] == $state['id_stav'] ? 'selected' : '') . ">$state[nazev]</option>";
+                                            }
                                         }
                                         echo "</select>";
                                     ?>
@@ -78,9 +94,12 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                             </div>
                         </div>
                         <?php
-                    } }?>
+                    } }else{
+                        echo $role == 3 ? '<p>Zadne naplanovane ukony</p>' : '';
+                    }?>
                     <?php
-                    $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv from ukony where stav = 6";
+                    if($role == 1 || $role > 4){
+                    $query = "SELECT id_ukon, stav, pocet_vagonu, cas, cislo_zkv from ukony where stav >= 5";
                     $query = $con->query($query);
                     if($query->num_rows > 0){
                         echo '</div><div class="station-list '.($flag ? 'margin-top50' : '').'">';?>
@@ -99,7 +118,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                         </div>
                         <?php
                     while ($row = $query->fetch_assoc()) { ?>
-                        <div class="station-list_item">
+                        <div class="station-list_item <?php echo (intval($row['stav']) == 5 ? 'plan_canceled' : '') ?>">
                             <div class="station-list_item_column">
                                 <div class="route-list_item_text no-padding">
                                     <?php
@@ -128,7 +147,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                             </div>
                         </div>
                         <?php
-                    }} ?>
+                    }} }?>
                 </div>
             </div>
         </section>
@@ -141,7 +160,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                     $type = $row['Type'];
                     if($row['Field'] == 'id_ukon' || $row['Field'] == 'finished'){
                     }elseif ($row['Field'] == 'cislo_zkv') {
-                        $depos = $con->query("SELECT cislo_zkv FROM vlak WHERE cislo_zkv not in (select cislo_zkv from ukony where stav != 6)");
+                        $depos = $con->query("SELECT cislo_zkv FROM vlak WHERE cislo_zkv not in (select cislo_zkv from ukony where stav < 5)");
                         echo "<div class='add_form__row'><label for='$row[Field]'>".$plansMap[$row['Field']]."</label><select id='$row[Field]' name='$row[Field]'>";
                         if($depos->num_rows > 0) {
                             while ($r = $depos->fetch_row()) {
@@ -152,7 +171,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                         }
                         echo "</select></div>";
                     } elseif ($row['Field'] == 'id_user') {
-                        $depos = $con->query("SELECT id, jmeno, prijmeni FROM zamestnanec WHERE role = '1' AND id not in (select id_user from ukony where stav != 6)");
+                        $depos = $con->query("SELECT id, jmeno, prijmeni FROM zamestnanec WHERE role = '3' AND id not in (select id_user from ukony where stav < 5)");
                         echo "<div class='add_form__row'><label for='$row[Field]'>".$plansMap[$row['Field']]."</label><select id='$row[Field]' name='$row[Field]'>";
                         if($depos->num_rows < 1){
                             echo "<option value='--'>----</option>";
@@ -228,7 +247,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                             echo "<div class='train-description_item'><span class='train-label'>$plansMap[$key]: </span><span data-name='$key' >$user[0] $user[1]</span></div>";
                         }elseif ($row['Field'] == 'id_ukon' || $row['Field'] == 'finished') {
                         }elseif ($row['Field'] == 'id_trasa') {
-                            $routes = $con->query("SELECT id, nazev_trasy, vyluka, delka FROM trasa WHERE disabled != '1' AND vyluka != '5'");
+                            $routes = $con->query("SELECT trasa.id, nazev_trasy, vyluky.nazev, delka FROM trasa left join vyluky on trasa.vyluka = vyluky.id WHERE disabled != '1' AND vyluka != '5'");
                             $rr = $routes->fetch_row();
                             echo "<div class='train-description_item'><span class='train-label'>$plansMap[$key]: </span><span data-name='$key' >$rr[1]          ".($rr[2] ? '('.$rr[2].')' : '').", Vzdálenost: $rr[3] km</span></div>";
                         }elseif ($row['Field'] == 'stav') {
@@ -236,10 +255,17 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                             $s = $states->fetch_row();
                             $states = 'SELECT * from stavy';
                             $states = $con->query($states);
-                            if($data['stav'] != 6) {
+                            if(intval($data['stav']) < 5) {
                                 echo '<div class=\'train-description_item\'><span class=\'train-label\'>' . $plansMap[$key] . ': </span><select class="change_state hidden" data-id="' . $data['id_ukon'] . '" data-train="'.$data['cislo_zkv'].'" >';
-                                while ($state = $states->fetch_assoc()) {
-                                    echo "<option value='$state[id_stav]' " . ($data['stav'] == $state['id_stav'] ? 'selected' : '') . ">$state[nazev]</option>";
+
+                                while($state = $states->fetch_assoc()){
+                                    if(($role == 3 && $state['id_stav'] == 2 ||  $state['id_stav']  == 3) || ($role == 1 || $role > 4)) {
+//                                        if(!($role == 3 && $state['id_stav'] != 1 && $row['stav'] == 1)){
+                                        echo "<option value='$state[id_stav]' " . ($data['stav'] == $state['id_stav'] ? 'selected' : '') . ">$state[nazev]</option>";
+//                                            }
+                                    }elseif($role == 3 && $data['stav'] == $state['id_stav']){
+                                        echo "<option value='$state[id_stav]' " . ($data['stav'] == $state['id_stav'] ? 'selected' : '') . ">$state[nazev]</option>";
+                                    }
                                 }
                                 echo "</select><span data-name='$key' class='adminizer adminizer-hide'>$s[1]</span></div>";
                             }else {
@@ -253,8 +279,10 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                 }
                 echo "</div>";
 //                echo '<button class="btn-actions ajax-action" data-action="plans-operation-update" data-id="id=\''.$data['id_ukon'].'\'" data-reload="detail_'.$data['id_ukon'].'">Uložit</button>';
-                echo '<button class="btn-actions" onclick="window.location.replace(\'app/export/export.php?id='.$data['id_ukon'].'\')" data-action="export-all"> Exportovat výkon</button>';
-                echo '<button class="btn-actions ajax-action" data-action="plans-operation-delete" data-delete="id_ukon=\''.$data['id_ukon'].'\'" data-reload="list">Smazat</button>';
+                if($role == 1 || $role > 4) {
+                    echo '<button class="btn-actions" onclick="window.location.replace(\'app/export/export.php?id=' . $data['id_ukon'] . '\')" data-action="export-all"> Exportovat výkon</button>';
+                    echo '<button class="btn-actions ajax-action" data-action="plans-operation-delete" data-delete="id_ukon=\'' . $data['id_ukon'] . '\'" data-reload="list">Smazat</button>';
+                }
                 echo "<button class='btn-actions load-page' data-action='plans-list'>Zpět na seznam</button></div>";
             }else{
                 echo "<div class='container'>Záznam neexistuje</div>";

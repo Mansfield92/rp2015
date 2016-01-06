@@ -34,7 +34,7 @@
             <div class="grid-item_text">
                 Plánování
             </div>
-        </div><?php }?><?php if($role > 4){?><div class="grid-item grid-item-big" data-action="reports-list">
+        </div><?php }?><?php if($role > 4 || $role == 1){?><div class="grid-item grid-item-big" data-action="reports-list">
             <img src="icons/graph_small.svg"/>
             <div class="grid-item_text">
                 Reporty
