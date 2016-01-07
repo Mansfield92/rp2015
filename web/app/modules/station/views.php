@@ -18,7 +18,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                     $type = $row['Type'];
                     if($row['Field'] == 'id') {
                         $id = 'NULL';
-                        echo "<div class='add_form__row'><label for='$row[Field]'>" . $stationMap[$row['Field']] . "</label><input type='text' name='$row[Field]' value='$id' disabled placeholder='$row[Type]' /></div>";
+//                        echo "<div class='add_form__row'><label for='$row[Field]'>" . $stationMap[$row['Field']] . "</label><input type='text' name='$row[Field]' value='$id' disabled placeholder='$row[Type]' /></div>";
                     }else echo "<div class='add_form__row'><label for='$row[Field]'>".$stationMap[$row['Field']]."</label><input type='text' name='$row[Field]' value='' placeholder='$row[Type]' /></div>";
                 }
                 echo "<button data-action='station-operation-insert' class='btn-basic btn-only-top center-block ajax-action'>Uložit Data</button>";

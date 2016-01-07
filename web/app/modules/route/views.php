@@ -77,7 +77,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                         $vyluka = $con->query($vyluka);
                         $vyluka = $vyluka->fetch_row();
                         ?>
-                        <div class="route-list_item <?php echo ($disabled || intval($vyluka[1]) == 100) ? 'disabled' : '' ?>">
+                        <div class="route-list_item <?php echo ($disabled || intval($vyluka[1]) == 100) ? 'disabled' : ''; echo (intval($vyluka[1]) == 100) ? ' vyluka' : ''; ?>">
                             <div class="route-list_item_column">
                                 <div class="route-list_item_text">
                                     <?php echo $row['nazev_trasy']; ?>
@@ -139,7 +139,7 @@ if (isset($_SESSION['login_role']) && intval($_SESSION['login_role']) >= 1) {
                     }elseif ($type != 'date') {
                         if($row['Field'] == 'id'){
                             $id = 'NULL';
-                            echo "<div class='add_form__row'><label for='$row[Field]'>".$routeMap[$row['Field']]."</label><input type='text' name='$row[Field]' value='$id' disabled placeholder='$row[Type]' /></div>";
+//                            echo "<div class='add_form__row'><label for='$row[Field]'>".$routeMap[$row['Field']]."</label><input type='text' name='$row[Field]' value='$id' disabled placeholder='$row[Type]' /></div>";
                         }else {
                             $size = substr($type, stripos($type, '(') + 1, (stripos($type, ')') - stripos($type, '(')) - 1);
                             $type = substr($type, 0, stripos($type, '('));

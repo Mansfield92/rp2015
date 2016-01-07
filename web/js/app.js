@@ -384,7 +384,7 @@ $App.routes = function(){
                 //var $parent = (($this.parent()  ).parent()).parent();
                 var $parent = $this.parent().parent().parent();
                 //alert($parent.attr('class'));
-                if($state){
+                if($state && !$parent.is('.vyluka')){
                     $parent.removeClass('disabled');
                 }else{
                     $parent.addClass('disabled');

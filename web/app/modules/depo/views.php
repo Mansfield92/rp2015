@@ -67,7 +67,7 @@ include('mapping.php');
                     if ($row['Field'] == 'img_url') {
                         echo "<div class='add_form__row'><label for='$row[Field]'>".$depoMap[$row['Field']]."</label><button id='upload_link' data-name='$row[Field]'>Vybrat obrázek</button></div>";
                     } elseif ($type != 'date') {
-                        if($row['Field'] == 'id' || $row['Field'] == 'kapacita' ){
+                        if($row['Field'] == 'id' ){
 //                            $id = 'NULL';
 //                            echo "<div class='add_form__row'><label for='$row[Field]'>".$depoMap[$row['Field']]."</label><input type='text' name='$row[Field]' value='$id' disabled placeholder='$row[Type]' /></div>";
                         }else {
@@ -102,7 +102,7 @@ include('mapping.php');
 
                 $i = 0;
                 while ($row = $rows->fetch_assoc()) {
-                    if ($row['Field'] != 'img_url' && $row['Field'] != 'id' && $row['Field'] != 'kapacita') {
+                    if ($row['Field'] != 'img_url' && $row['Field'] != 'id') {
                         if($i++ == 4){
                             echo "<div class='train-description_item'><span class='train-label'>Počet zaměstnanců: </span><span>$ppl</span></div>";
                             echo "</div><div class='train-description train-description_right'>";
