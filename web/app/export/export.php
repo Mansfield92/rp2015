@@ -17,7 +17,7 @@ LEFT JOIN vyluky on trasa.vyluka = vyluky.id";
 if(!$all){
     $query .= " WHERE id_ukon = $id";
 }
-$query .= $extra ? ($extra == 'dead' ? " WHERE ukony.stav = 6" : " WHERE ukony.stav != 6") : '';
+$query .= $extra ? ($extra == 'dead' ? " WHERE ukony.stav >= 5" : " WHERE ukony.stav < 5") : '';
 
 
 //echo $query;
